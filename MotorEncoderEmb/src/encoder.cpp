@@ -20,18 +20,23 @@ void Encoder::update() {
     bool current_state_A = encoder_pin_A.is_lo();  // Read the current state of encoder pin A (C1)
     bool current_state_B = encoder_pin_B.is_lo();  // Read the current state of encoder pin B (C2)
 
-    if (current_state_A != last_state_A) {
+    if ((current_state_A == last_state_A) && (current_state_B == last_state_B)){
+            PORTB &= ~(1 << PB5);
+        }
+
+    else if (current_state_A != last_state_A) {
         // C1 state has changed, determine direction based on C2
         if (current_state_B != current_state_A) {
             count++;  // Increment if C1 leads C2
         } else {
             count--;  // Decrement if C2 leads C1
         }
-
+        
         // Signal that the state change has been handled
         PORTB |= (1 << PB5); // Turn on LED
         PORTB &= ~(1 << PB5); // Turn off LED
     }
+    
 
     // Update last states
     last_state_A = current_state_A;
