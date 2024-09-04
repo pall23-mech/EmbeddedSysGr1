@@ -1,8 +1,7 @@
 #include <Arduino.h>
 #include "encoder.h"
 
-
-Encoder encoder(3, 4); // C1 on PB3 (Digital Pin 11), C2 on PB4 (Digital Pin 12)
+Encoder encoder(3, 4); // C1 on pin 3 (INT1), C2 on pin 4
 
 void setup() 
 {
@@ -10,10 +9,9 @@ void setup()
     encoder.init(); // Initialize the encoder
 }
 
-
 void looping()
 {
-    encoder.update();    // Continuously update the encoder count
+    // The update function is not needed anymore, as interrupts handle the encoder updates
 
     static unsigned long lastPrintTime = 0;
     unsigned long currentTime = millis();
@@ -26,7 +24,7 @@ void looping()
         lastPrintTime = currentTime;
     }
 
-    delayMicroseconds(71); // Add a 140-microsecond delay between checks (not exact, since delay() is in milliseconds)
+    delayMicroseconds(71); // Add a small delay between checks
 }
 
 int main()

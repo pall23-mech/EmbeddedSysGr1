@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Users/palli/OneDrive/Skjöl/PlatformIO/Projects/EmbeddedSysGr1",
-      "program": "c:/Users/palli/OneDrive/Skjöl/PlatformIO/Projects/EmbeddedSysGr1/build/Debug/outDebug",
+      "cwd": "c:/Users/palli/OneDrive/Skjöl/PlatformIO/Projects/EmbeddedSysGr1/MotorEncoderEmb/src",
+      "program": "c:/Users/palli/OneDrive/Skjöl/PlatformIO/Projects/EmbeddedSysGr1/MotorEncoderEmb/src/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
