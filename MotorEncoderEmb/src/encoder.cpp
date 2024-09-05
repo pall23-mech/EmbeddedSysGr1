@@ -1,3 +1,5 @@
+///Our old encoder had a last state to monitor changes, this one does not yet.
+//Begin by using a last state variable to document position
 #include "encoder.h"
 #include <Arduino.h>
 
@@ -7,7 +9,8 @@ volatile int encoderPosition = 0;  // Position of the encoder
 // Static variables for the encoder pins (interrupts need them to be global)
 static int encoderPinA;
 static int encoderPinB;
-
+bool last_stateA = false;
+bool last_stateB = false;
 // Pin Change Interrupt Service Routine
 ISR(PCINT1_vect) {
     // Read the current state of both encoder pins
@@ -15,12 +18,25 @@ ISR(PCINT1_vect) {
     bool state_B = digitalRead(encoderPinB);
 
     // Determine direction based on the states of A and B
-    if (state_A != state_B) {
+    if (state_A != last_stateA)
+    {
+        if (state_B != state_A)
+        {
+
         encoderPosition++;  // Clockwise rotation
-    } else {
+        }
+        else 
+        {
         encoderPosition--;  // Counterclockwise rotation
+        }
     }
+    PORTB ^= (1 << PB5);
+    last_stateA = state_A;
+    last_stateB = state_B;
 }
+    
+
+
 
 Encoder::Encoder(int pin_A, int pin_B)
     : encoder_pin_A(pin_A), encoder_pin_B(pin_B), count(0) {
@@ -38,7 +54,7 @@ void Encoder::init() {
 
     // Enable Pin Change Interrupts for A2 (PCINT10) and A3 (PCINT11)
     PCICR |= (1 << PCIE1); // Enable Pin Change Interrupts for PCINT[14:8] (which includes A2 and A3)
-   // PCMSK1 |= (1 << PCINT10); // Enable interrupt for A2 (PCINT10)
+    PCMSK1 |= (1 << PCINT10); // Enable interrupt for A2 (PCINT10)
     PCMSK1 |= (1 << PCINT11); // Enable interrupt for A3 (PCINT11)
 }
 
