@@ -77,5 +77,7 @@ float Encoder::speedPPS() {
 
 float Encoder::speedRPM() {
     float pps = speedPPS();
-    return (pps * 60.0) / pulses_per_rev; // Convert pulses per second to RPM
+    float rpm = (pps * 60.0) / pulses_per_rev; // Convert pulses per second to RPM
+
+    return rpm;
 }

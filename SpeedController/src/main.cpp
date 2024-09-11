@@ -1,8 +1,8 @@
 #include <Arduino.h>
 #include "encoder.h"
 
-// Initialize the encoder on A2 (PCINT10, pin 16) and A3 (PCINT11, pin 17) and 20 pulses per rev
-Encoder encoder(16, 17, 20);
+// Initialize the encoder on A2 (PCINT10, pin 16) and A3 (PCINT11, pin 17) and 1400 pulses per rev, from the specifications
+Encoder encoder(16, 17, 1400.0);
 
 void setup() 
 {
@@ -22,10 +22,12 @@ void looping()
         Serial.println(encoder.position());
 
         Serial.print("Speed (PPS): ");
-        Serial.println(encoder.speedPPS());
+        float pps = encoder.speedPPS();
+        Serial.println(pps);
 
         Serial.print("Speed (RPM): ");
-        Serial.println(encoder.speedRPM());
+        float rpm = (pps * 60.0) / 1400;
+        Serial.println(rpm);        
 
         lastPrintTime = currentTime;
     }

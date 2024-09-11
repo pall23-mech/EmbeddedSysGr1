@@ -16,7 +16,7 @@ public:
 private:
     int encoder_pin_A;              // Pin for the first encoder pin (C1)
     int encoder_pin_B;              // Pin for the second encoder pin (C2)
-    int pulses_per_rev;             // Number of pulses per revolution (PPR)
+    float pulses_per_rev;             // Number of pulses per revolution (PPR)
     volatile int last_position;     // Last encoder position to calculate speed
     volatile unsigned long last_time; // Time of the last postion update
     volatile int count;             // Volatile counter for encoder position
