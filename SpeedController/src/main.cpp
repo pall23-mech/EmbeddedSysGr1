@@ -1,18 +1,49 @@
 #include <Arduino.h>
+#include "encoder.h"
 
-// put function declarations here:
-int myFunction(int, int);
+// Initialize the encoder on A2 (PCINT10, pin 16) and A3 (PCINT11, pin 17) and 20 pulses per rev
+Encoder encoder(16, 17, 20);
 
-void setup() {
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
+void setup() 
+{
+    Serial.begin(9600);  // Start serial communication at 9600 baud
+    encoder.init();      // Initialize the encoder and interrupts
 }
 
-void loop() {
-  // put your main code here, to run repeatedly:
+void looping()
+{
+    static unsigned long lastPrintTime = 0;
+    unsigned long currentTime = millis();
+
+    // Print the position at a regular interval (every second)
+    if (currentTime - lastPrintTime >= 1000) 
+    {
+        Serial.print("Position: ");
+        Serial.println(encoder.position());
+
+        Serial.print("Speed (PPS): ");
+        Serial.println(encoder.speedPPS());
+
+        Serial.print("Speed (RPM): ");
+        Serial.println(encoder.speedRPM());
+
+        lastPrintTime = currentTime;
+    }
 }
 
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+int main()
+{
+    // Initialize Arduino core functions
+    init();  // IMPORTANT: Initialize Arduino core libraries (including Serial)
+
+    // Call the setup() function
+    setup();
+
+    // Infinite loop that continuously calls loop() as Arduino normally would
+    while (1) 
+    {
+        looping();  // Continuously check for updates and print position
+    }
+
+    return 0;
 }
