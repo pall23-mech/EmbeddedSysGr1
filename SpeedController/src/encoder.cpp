@@ -29,7 +29,7 @@ ISR(PCINT1_vect) {
         encoderPosition--;  // Counterclockwise rotation
         }
     }
-    PORTB ^= (1 << PB5); // Do we need this?
+    PORTB ^= (1 << PB5); // LED toggle
     last_stateA = state_A;
     last_stateB = state_B;
 }
@@ -61,23 +61,25 @@ int Encoder::position() const {
     return encoderPosition;  // Return the current position count
 }
 
-float Encoder::speedPPS() {
+void Encoder::updateSpeed() {
     unsigned long currentTime = millis();
     unsigned long deltaTime = currentTime - last_time;
-    int deltaPosition = encoderPosition - last_position;
 
-    float speedPPS = (float)deltaPosition / (deltaTime / 1000.0); // Calculate pulses per second
+    if (deltaTime > 0) {
+        int deltaPosition = encoderPosition - last_position;
+        pps = (float)deltaPosition / (deltaTime / 1000.0); // Calculate pulses per second
+        rpm = (pps * 60.0) / pulses_per_rev;
 
-    // Update last position and time
-    last_position = encoderPosition;
-    last_time = currentTime;
-
-    return speedPPS;
+        // Update last position and time
+        last_position = encoderPosition;
+        last_time = currentTime;
+    }
 }
 
-float Encoder::speedRPM() {
-    float pps = speedPPS();
-    float rpm = (pps * 60.0) / pulses_per_rev; // Convert pulses per second to RPM
+float Encoder::speedPPS() const {
+    return pps; // Return the last stored PPS value
+}
 
-    return rpm;
+float Encoder::speedRPM() const {
+    return rpm; // Return the last stored RPM value
 }

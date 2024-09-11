@@ -10,8 +10,9 @@ public:
 
     void init();                    // Initializes the encoder pins and attaches interrupts
     int position() const;           // Returns the current encoder position count
-    float speedPPS();               // Returns the speed in pulses per second (PPS)
-    float speedRPM();               // Returns the speed in revolutions per minute (RPM)
+    void updateSpeed();
+    float speedPPS() const;               // Returns the speed in pulses per second (PPS)
+    float speedRPM() const;               // Returns the speed in revolutions per minute (RPM)
 
 private:
     int encoder_pin_A;              // Pin for the first encoder pin (C1)
@@ -20,6 +21,9 @@ private:
     volatile int last_position;     // Last encoder position to calculate speed
     volatile unsigned long last_time; // Time of the last postion update
     volatile int count;             // Volatile counter for encoder position
+
+    float pps;                      // Stored value for pulses per second
+    float rpm;                      // Stored value for RPM
 };
 
 #endif // ENCODER_H

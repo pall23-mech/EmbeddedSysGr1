@@ -18,16 +18,16 @@ void looping()
     // Print the position at a regular interval (every second)
     if (currentTime - lastPrintTime >= 1000) 
     {
+        encoder.updateSpeed(); // Update the speed (PPS and RPM) based on the current position and time
+
         Serial.print("Position: ");
         Serial.println(encoder.position());
 
         Serial.print("Speed (PPS): ");
-        float pps = encoder.speedPPS();
-        Serial.println(pps);
+        Serial.println(encoder.speedPPS());
 
         Serial.print("Speed (RPM): ");
-        float rpm = (pps * 60.0) / 1400;
-        Serial.println(rpm);        
+        Serial.println(encoder.speedRPM());        
 
         lastPrintTime = currentTime;
     }
