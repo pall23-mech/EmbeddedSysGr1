@@ -75,7 +75,6 @@ int main()
     while (1)
     {
         controlLoop();
-
     }
 
     return 0;
