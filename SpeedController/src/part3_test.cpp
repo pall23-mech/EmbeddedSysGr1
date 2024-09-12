@@ -2,6 +2,7 @@
 #include "encoder.h"
 
 #define PWM_PIN 9 // Pin for PWM control of the motor
+#define AIN2_PIN 8 // Pin for the motor direction control (Ain2)
 #define CONTROL_PERIOD 10 // Control update every 10ms
 #define PWM_FREQ 500 // 500Hz PWM frequency
 
@@ -28,6 +29,10 @@ void setup()
     encoder.init();     // Initialize the encoder and interrupts
 
     setupPWM_Timer1(); // Set up timer1 for PWM on pin 9
+
+    pinMode(AIN2_PIN, OUTPUT); // Set Ain2 as an output pin
+
+    digitalWrite(AIN2_PIN, LOW); // LOW for one direction, change to HIGH for reverse direction
 }
 
 void controlLoop()
@@ -43,7 +48,7 @@ void controlLoop()
 
         float controlSignal = Kp * error; // Proportional control law
 
-        int dutyCycle = constrain(map(controlSignal, 0, targetPPS, 0, 225), 0, 255);
+        int dutyCycle = constrain(map(controlSignal, 0, targetPPS, 0, 499), 0, 499);
 
         OCR1A = dutyCycle; // Apply PWM to pin 9 (Timer1, OCR1A controls duty cycle)
 
