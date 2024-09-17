@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include "encoder.h"
-
+//tau 1: 726ms, tau 2: 834ms tau 3: 876
 // Initialize the encoder on A2 (PCINT10, pin 16) and A3 (PCINT11, pin 17), 1400 pulses per rev
 Encoder encoder(16, 17, 1400.0);
 int null_postion = 0;  // Track the state of the encoder (whether it's in the initial state, moving, or done)

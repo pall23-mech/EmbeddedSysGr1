@@ -1,85 +1,85 @@
 #include <Arduino.h>
 #include "encoder.h"
 
-#define PWM_PIN 9 // Pin for PWM control of the motor
-#define AIN2_PIN 8 // Pin for the motor direction control (Ain2)
-#define CONTROL_PERIOD 10 // Control update every 10ms
-#define PWM_FREQ 500 // 500Hz PWM frequency
-
-// Initialize the encoder on A2 (PCINT10, pin 16) and A3 (PCINT11, pin 17) and 1400 pulses per rev, from the specifications
+// Initialize the encoder on A2 (PCINT10, pin 16) and A3 (PCINT11, pin 17), 1400 pulses per rev
 Encoder encoder(16, 17, 1400.0);
+int null_postion = 0;  // Track the state of the encoder (whether it's in the initial state, moving, or done)
+unsigned long startTime = 0;
+unsigned long endTime = 0;
+unsigned long elapsedTime = 0;
+float maxPPS = 3490;  // Pre-measured maximum PPS
+float mesMaxPPS = 0;  // Maximum PPS measured in this run
+float omega1 = 0.63 * maxPPS;  // Threshold for tau measurement (63% of maxPPS)
+float mesTau = 0;  // Measured tau (to be printed)
+float speedPPS;
 
-float targetPPS = 2000.0; // Desired speed (commanded reference speed)  (we can also use RPM)
-float Kp = 4.5; // Proportional gain for the controller
-unsigned long lastControlUpdate = 0; // Time of the last control update
-
-void setupPWM_Timer1()
-{
-    pinMode(PWM_PIN, OUTPUT); // Configure Timer 1 for 500 Hz on pin 9
-
-    // Set Timer1 to Fast PWM mode with a top value of 499 for 500 Hz
-    TCCR1A = (1 << WGM11) | (1 << COM1A1); // Fast PWM, non-inverted
-    TCCR1B = (1 << WGM13) | (1 << WGM12) | (1 << CS11) | (1 << CS10); // Fast PWM, Prescaler = 64
-    ICR1 = 499; // Set TOP value for 500 Hz
+void setup() {
+    Serial.begin(9600);  // Start serial communication at 9600 baud
+    encoder.init();      // Initialize the encoder and interrupts
 }
 
-void setup()
-{
-    Serial.begin(9600); // Start serial communication at 9600 baud
-    encoder.init();     // Initialize the encoder and interrupts
-
-    setupPWM_Timer1(); // Set up timer1 for PWM on pin 9
-
-    pinMode(AIN2_PIN, OUTPUT); // Set Ain2 as an output pin
-
-    digitalWrite(AIN2_PIN, LOW); // LOW for one direction, change to HIGH for reverse direction
-}
-
-void controlLoop()
-{
+void looping() {
+    static unsigned long lastPrintTime = 0;
     unsigned long currentTime = millis();
+    
+    // Detect the first movement of the motor (start recording time)
+    if (encoder.position() != null_postion && null_postion == 0) {
+        startTime = currentTime;  // Record the start time when the motor first moves
+        null_postion = 1;         // Update state to indicate movement has started
+    }
 
-    if (currentTime - lastControlUpdate >= CONTROL_PERIOD) // control update every 10 ms
-    {
-        encoder.updateSpeed(); // Update the speed (PPS and RPM) based on the current position and time
+    // Check if the speed reaches 63% of maxPPS and record the time (for tau)
+    if (encoder.speedPPS() >= omega1 && null_postion == 1) {
+        endTime = currentTime;  // Record the time when speed hits 63% of maxPPS
+        elapsedTime = endTime - startTime;
+        mesTau = elapsedTime;  // Store the measured tau value
+        null_postion = 2;      // Update state to indicate tau measurement is done
+    }
 
-        float actualPPS = encoder.speedPPS();
-        float error = targetPPS - actualPPS;
+    // Print the position and speed every second
+    if (currentTime - lastPrintTime >= 1000) {
+        encoder.updateSpeed();  // Update the speed (PPS and RPM)
 
-        float controlSignal = Kp * error; // Proportional control law
+        // Update mesMaxPPS if the current speed is the highest recorded so far
+        speedPPS = encoder.speedPPS();
+        if (speedPPS >= mesMaxPPS) {
+            mesMaxPPS = speedPPS;  // Track the highest speed measured
+        }
 
-        int dutyCycle = constrain(map(controlSignal, 0, targetPPS, 0, 499), 0, 499);
+        // Print position, speed, and other values
+        Serial.print("Position: ");
+        Serial.println(encoder.position());
 
-        OCR1A = dutyCycle; // Apply PWM to pin 9 (Timer1, OCR1A controls duty cycle)
+        Serial.print("Speed (PPS): ");
+        Serial.println(speedPPS);
 
+        Serial.print("Speed (RPM): ");
+        Serial.println(encoder.speedRPM());
 
-        Serial.print("Target PPS: ");
-        Serial.println(targetPPS);
+        // Print the maximum measured PPS in this run
+        Serial.print("Maximum measured (PPS): ");
+        Serial.println(mesMaxPPS);
 
-        Serial.print("Actual PPS: ");
-        Serial.println(actualPPS);
+        // Print the measured tau when it's available (after tau has been calculated)
+        
+        Serial.print("Measured tau [ms]: ");
+        Serial.println(mesTau);
+        
 
-        Serial.print("Control Signal (PWM Duty): ");
-        Serial.println(dutyCycle);
-
-        lastControlUpdate = currentTime;
+        lastPrintTime = currentTime;  // Update the time of the last print
     }
 }
 
-int main()
-{
-    
-    //take position comparison,
+int main() {
     // Initialize Arduino core functions
-    init(); // IMPORTANT: Initialize Arduino core libraries (including Serial)
+    init();  // Initialize Arduino core libraries (including Serial)
 
     // Call the setup() function
     setup();
 
     // Infinite loop that continuously calls loop() as Arduino normally would
-    while (1)
-    {
-        controlLoop();
+    while (1) {
+        looping();  // Continuously check for updates and print position
     }
 
     return 0;
