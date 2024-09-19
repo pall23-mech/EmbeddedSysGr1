@@ -16,7 +16,7 @@ unsigned long lastControlUpdate = 0; // Time of the last control update
 Analog_out directionControl(8); // Pin number directly passed to the constructor
 
 void setup() {
-    Serial.begin(9600); // Start serial communication at 9600 baud
+    Serial.begin(115200); // Start serial communication at 9600 baud
     encoder.init();     // Initialize the encoder and interrupts
 
     setupPWM_Timer1(); // Set up Timer1 for PWM using the new function
