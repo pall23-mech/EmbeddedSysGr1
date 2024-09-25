@@ -1,0 +1,27 @@
+@startuml State 1
+
+state "Initialization" as I #LightBlue
+
+state "PreOperational" as P #Orange
+
+state "Operational" as O #MediumSeaGreen
+
+state "Stopped" as S #IndianRed
+
+
+P --> O
+P --> I
+P --> S
+
+O --> P
+O --> I
+O --> S
+
+S --> O
+S --> P
+S --> I
+
+I --> P : ID | Boot-up
+
+
+@enduml

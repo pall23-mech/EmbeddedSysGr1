@@ -1,12 +1,17 @@
-@startuml State 1
+@startuml State 2
 
 state "Initialization" as I #LightBlue
 
 state "Operational" as O #MediumSeaGreen
 
+state "Stopped" as S #IndianRed
+
 
 O --> I
-I --> O
+O --> S
+
+S --> O
+S --> I
 
 
 @enduml
