@@ -36,7 +36,7 @@ void Context::reset()
     this->state_->on_reset();
 }
 
-void Context::event2()
+void Context::transition()
 {
     this->state_->on_transition();
 }
