@@ -12,7 +12,7 @@ public:
 
     // change on_eventX to our event names
     void on_reset() override; 
-    void on_event2() override; 
+    void on_transition() override; 
 };
 
 #endif // INITIALIZATION_STATE_H

@@ -27,9 +27,9 @@ void OperationalState::on_entry()
         this->context_->transition_to(new InitializationState()); //System reset
     }
 
-    void OperationalState::on_event2()
+    void OperationalState::on_transition()
     {
-        Serial.println("Transition to pre-operational state");
-        this->context_->transition_to(new OperationalState());
+        //Serial.println("Transition to pre-operational state");
+        //this->context_->transition_to(new preOperationalState());
         // Will transition to the preOperationalState later
     }

@@ -24,7 +24,7 @@ public:
     virtual void on_exit() = 0;
 
     virtual void on_reset() = 0;
-    virtual void on_event2() = 0;
+    virtual void on_transition() = 0;
     // hav one for each action instead of on_eventX()
 };
 

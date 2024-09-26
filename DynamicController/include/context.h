@@ -14,8 +14,9 @@ public:
 
     void transition_to(State *state);
     void do_work();
+
     void reset();
-    void event2();
+    void transition(); // change later...
 };
 
 #endif // CONTEXT_H

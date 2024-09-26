@@ -27,18 +27,17 @@ void loop()
     // compare the value received to a character constant:
     switch (command)
     {
-    case 'c':
-      context->reset(); // too cool, in Idle
+    case 'r':
+      context->reset(); // reset, in operational to initialization
       break;
     
-    case 'h':
-      context->event2(); // too hot, in Idle
+    case 't':
+      context->transition(); // transition, in initialization to operational
       break;
 
     default:
       Serial.println("Unknown command");
       break;
     }
-
   }
 }
