@@ -5,14 +5,14 @@
 
 void OperationalState::on_entry()
     {
-        Serial.println("Entering operational state");
+        Serial.println("Entering Operational state, available commands:");
         Serial.println("'r' - Reset (transition to Initilaization)");
         digitalWrite(LED_BUILTIN, HIGH); // Turn LED on in operational state
     }
 
     void OperationalState::on_exit()
     {
-        Serial.println("Exiting operational state state");
+        Serial.println("Exiting Operational state state");
         digitalWrite(LED_BUILTIN, LOW);
     }
 
