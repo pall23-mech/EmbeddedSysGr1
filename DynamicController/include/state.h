@@ -25,6 +25,7 @@ public:
 
     virtual void on_event1() = 0;
     virtual void on_event2() = 0;
+    // hav one for each action instead of on_eventX()
 };
 
 #endif // STATE_H

@@ -1,12 +1,18 @@
 @startuml State 1
 
 state "Initialization" as I #LightBlue
+I : entry / startUP
+I : do / Initialization
+I : exit / 
 
 state "Operational" as O #MediumSeaGreen
+O : entry / startUP
+O : do / LED on
+O : exit / shutDown
 
 
-O --> I
-I --> O
+O --> I : action
+I --> O : action 2
 
 
 @enduml
