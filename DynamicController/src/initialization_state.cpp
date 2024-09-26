@@ -5,8 +5,11 @@
 
 void InitializationState::on_entry()
     {
-        Serial.println("Entering Initialization state, available commands:");
-        Serial.println("'t' - Transition (transition to Operational)");
+        Serial.println("Entering Initialization state; Initializing parameters...");
+        Serial.println("Available commands:");
+        Serial.println("'t' - Transition (transition to Operational)"); // Will be autononmous
+
+        // initailize here
     }
 
     void InitializationState::on_exit()
