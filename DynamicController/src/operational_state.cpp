@@ -5,28 +5,31 @@
 
 void OperationalState::on_entry()
     {
-        Serial.println("Entering Initialization state, available commands:");
-        Serial.println("'c' - Too Cool (transition to Heating)");
-        Serial.println("'h' - Too Hot (transition to Cooling)");
-    }
+        Serial.println("Entering operational state");
+        digitalWrite(LED_BUILTIN, HIGH); // Turn LED on in operational state
+
+        }
 
     void OperationalState::on_exit()
     {
-        Serial.println("Exiting Initialization state");
+        Serial.println("Exiting operational state state");
+        digitalWrite(LED_BUILTIN, LOW);
     }
 
     void OperationalState::on_do()
     {
         // operational behavior
+        Serial.println("Motor operating normally")
     }
 
     void OperationalState::on_event1()
     {
-        Serial.println("Event: Too cool. Transitioning to Heating...");
-        this->context_->transition_to(new InitializationState());
+        Serial.println("Reset command, transitioning to Initializaiton state");
+        this->context_->transition_to(new InitializationState()); //System reset
     }
 
     void OperationalState::on_event2()
     {
-
+        Serial.println("Transition to pre-operational state")
+        this->context_->transition_to(new PreOperationalState());
     }
