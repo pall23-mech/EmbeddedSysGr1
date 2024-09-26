@@ -28,24 +28,13 @@ void loop()
     switch (command)
     {
     case 'c':
-      context->event1(); // too cool, in Idle
+      context->reset(); // too cool, in Idle
       break;
     
     case 'h':
       context->event2(); // too hot, in Idle
       break;
 
-    case 'f':
-      context-> event1(); // failure, in Heating and Cooling
-      break;
-
-    case 'o':
-      context-> event2(); // OK, in Heating and Cooling
-      break;
-
-    case 'n':
-      context-> event1(); // failure cleared, in Failure
-    
     default:
       Serial.println("Unknown command");
       break;

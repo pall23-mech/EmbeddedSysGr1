@@ -14,7 +14,7 @@ public:
 
     void transition_to(State *state);
     void do_work();
-    void event1();
+    void reset();
     void event2();
 };
 
