@@ -6,6 +6,7 @@
 void OperationalState::on_entry()
     {
         Serial.println("Entering operational state");
+        Serial.println("'r' - Reset (transition to Initilaization)");
         digitalWrite(LED_BUILTIN, HIGH); // Turn LED on in operational state
     }
 
@@ -18,7 +19,7 @@ void OperationalState::on_entry()
     void OperationalState::on_do()
     {
         // operational behavior
-        Serial.println("Motor operating normally");
+        //Serial.println("Motor operating normally");
     }
 
     void OperationalState::on_reset()
