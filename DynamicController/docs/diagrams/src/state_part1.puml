@@ -11,8 +11,8 @@ O : do / LED on
 O : exit / shutDown
 
 
-O --> I : action
-I --> O : action 2
+O --> I : Reset
+I --> O : action 2?
 
 
 @enduml

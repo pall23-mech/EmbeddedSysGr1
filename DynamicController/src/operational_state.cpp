@@ -7,8 +7,7 @@ void OperationalState::on_entry()
     {
         Serial.println("Entering operational state");
         digitalWrite(LED_BUILTIN, HIGH); // Turn LED on in operational state
-
-        }
+    }
 
     void OperationalState::on_exit()
     {
@@ -19,10 +18,10 @@ void OperationalState::on_entry()
     void OperationalState::on_do()
     {
         // operational behavior
-        Serial.println("Motor operating normally")
+        Serial.println("Motor operating normally");
     }
 
-    void OperationalState::on_event1()
+    void OperationalState::on_reset()
     {
         Serial.println("Reset command, transitioning to Initializaiton state");
         this->context_->transition_to(new InitializationState()); //System reset
@@ -30,6 +29,7 @@ void OperationalState::on_entry()
 
     void OperationalState::on_event2()
     {
-        Serial.println("Transition to pre-operational state")
-        this->context_->transition_to(new PreOperationalState());
+        Serial.println("Transition to pre-operational state");
+        this->context_->transition_to(new OperationalState());
+        // Will transition to the preOperationalState later
     }

@@ -29,9 +29,11 @@ void Context::do_work()
     this->state_->on_do();
 }
 
-void Context::event1()
+// Switch out event1.. with our event names
+
+void Context::reset()
 {
-    this->state_->on_event1();
+    this->state_->on_reset();
 }
 
 void Context::event2()

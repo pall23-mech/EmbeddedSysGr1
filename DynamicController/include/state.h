@@ -23,7 +23,7 @@ public:
     virtual void on_entry() = 0;
     virtual void on_exit() = 0;
 
-    virtual void on_event1() = 0;
+    virtual void on_reset() = 0;
     virtual void on_event2() = 0;
     // hav one for each action instead of on_eventX()
 };

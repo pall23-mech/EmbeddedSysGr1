@@ -20,7 +20,7 @@ void InitializationState::on_entry()
         // initialization behavior
     }
 
-    void InitializationState::on_event1()
+    void InitializationState::on_reset()
     {
         Serial.println("Event: Too cool. Transitioning to Heating...");
         this->context_->transition_to(new OperationalState());
