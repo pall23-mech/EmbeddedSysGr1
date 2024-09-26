@@ -1,4 +1,3 @@
-
 #include <context.h>
 #include <state.h>
 
@@ -37,7 +36,7 @@ void Context::reset()
     this->state_->on_reset();
 }
 
-void Context::transition()
+void Context::event2()
 {
-    this->state_->on_transition();
+    this->state_->on_event2();
 }

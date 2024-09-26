@@ -5,6 +5,7 @@
 
 void InitializationState::on_entry()
     {
+        digitalWrite(LED_BUILTIN, LOW); //initialize system, just LED for now
         Serial.println("Entering Initialization state, available commands:");
         Serial.println("'t' - Transition (transition to Operational)");
     }
