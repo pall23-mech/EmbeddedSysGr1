@@ -1,14 +1,14 @@
 @startuml State 1
 
 state "Initialization" as I #LightBlue
-I : entry / Initialization
-I : do / 
-I : exit / 
+I : entry / StartUp or Reset
+I : do / Initialization
+I : exit / Transition
 
 state "Operational" as O #MediumSeaGreen
-O : entry / startUP
-O : do / LED on
-O : exit / shutDown
+O : entry / Transition
+O : do / LED on, device working
+O : exit / Reset
 
 
 O --> I : Reset

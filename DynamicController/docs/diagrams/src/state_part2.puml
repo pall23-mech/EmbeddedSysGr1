@@ -1,19 +1,19 @@
 @startuml State 2
 
 state "Initialization" as I #LightBlue
-I : entry / Initialization
-I : do / 
-I : exit / 
+I : entry / StartUp or Reset
+I : do / Initialization
+I : exit / Transition or Fault detected
 
 state "Operational" as O #MediumSeaGreen
-O : entry / startUP
-O : do / LED on
-O : exit / shutDown
+O : entry / Transition
+O : do / LED on, device working
+O : exit / Reset or Fault detected
 
 state "Stopped" as S #IndianRed
-O : entry / faultDetected
+O : entry / Fault detected
 O : do / LED blinking at 2 Hz
-O : exit /
+O : exit / Transition
 
 
 O --> I : Reset
