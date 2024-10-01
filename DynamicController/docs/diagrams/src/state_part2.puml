@@ -1,8 +1,8 @@
 @startuml State 2
 
 state "Initialization" as I #LightBlue
-I : entry / startUP
-I : do / Initialization
+I : entry / Initialization
+I : do / 
 I : exit / 
 
 state "Operational" as O #MediumSeaGreen
