@@ -21,6 +21,7 @@ void StoppedState::on_entry()
     {
         // operational behavior
         // Blink at 2 HZ
+        //blinkLED(2);
     }
 
     void StoppedState::on_reset()
