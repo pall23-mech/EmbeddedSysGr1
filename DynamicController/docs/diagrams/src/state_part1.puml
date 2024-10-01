@@ -12,7 +12,7 @@ O : exit / shutDown
 
 
 O --> I : Reset
-I --> O : Transition
 
+I --> O : Transition
 
 @enduml
