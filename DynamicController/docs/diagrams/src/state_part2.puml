@@ -7,11 +7,11 @@ state "Operational" as O #MediumSeaGreen
 state "Stopped" as S #IndianRed
 
 
-O --> I
-O --> S
+O --> I :reset
+O --> S :fault
 
-S --> O
-S --> I
+S --> O :set operational
+S --> I :reset
 
 
 @enduml
