@@ -1,6 +1,7 @@
 #include <initialization_state.h>
 #include <context.h>
 
+
 int command = 0; // for incoming serial data
 
 Context *context;
@@ -9,11 +10,12 @@ const int FLT_PIN = 2; // Pin for fault signal (modify according to your configu
 
 void setup()
 {
-  Serial.begin(9600); // opens serial port, sets data rate to 9600 bps
+  Serial.begin(9600); // opens serial port, sets data rate to 9600 bps (115200 does not work for Margrét, the output is strange then)
   // can put serial.println for commands available here...
   context = new Context(new InitializationState()); // Start in Initialization state
   pinMode(LED_BUILTIN, OUTPUT); // Set LED pin as output
   pinMode(FLT_PIN, INPUT); // Set FLT pin as input
+  //pinMode(FLT_PIN, INPUT_PULLUP); // use pull-up for the emergency stop button  (if button not connected, comment this out, else you enter the fault state)
 }
 
 void loop()
@@ -21,6 +23,7 @@ void loop()
   // The main code:
 
   context->do_work(); // Execute current state's behavior
+
   if (digitalRead(FLT_PIN) == HIGH) {
     context->fault(); // If FLT pin is high, a fault is detected, transition to Stopped state
   }

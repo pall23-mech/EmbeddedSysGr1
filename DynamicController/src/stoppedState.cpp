@@ -21,7 +21,10 @@ void StoppedState::on_entry()
     {
         // operational behavior
         // Blink at 2 HZ
-        //blinkLED(2);
+        digitalWrite(LED_BUILTIN, HIGH);
+        delay(500 / 2);
+        digitalWrite(LED_BUILTIN, LOW);
+        delay(500 / 2);
     }
 
     void StoppedState::on_reset()
@@ -38,7 +41,6 @@ void StoppedState::on_entry()
     }
 
     void StoppedState::on_fault()
-    {
-        Serial.println("Fault detection, transitioning to Stopped state");
-        this->context_->transition_to(new StoppedState());
+    {   
+        // If already in fault state, no need to retrigger
     }

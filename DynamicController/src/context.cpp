@@ -1,9 +1,16 @@
-
 #include <context.h>
 #include <state.h>
+#include <encoder.h>
+#include <pwm_control.h>
 
-Context::Context(State *state) : state_(nullptr)
+// Define the extern varialbes to match their usage in pwm_control.cpp
+Encoder encoder(16, 17, 1400.0);
+float targetPPS = 0.0;
+unsigned long lastControlUpdate = 0;
+
+Context::Context(State *state) : state_(nullptr), encoder(16, 17, 1400.0), directionControl(8)
 {
+    // Initialize state and set the context
     this->transition_to(state);
 }
 
@@ -12,6 +19,7 @@ Context::~Context()
     delete state_;
 }
 
+// Transition to a new state
 void Context::transition_to(State *state)
 {
     if (this->state_ != nullptr)
@@ -25,6 +33,7 @@ void Context::transition_to(State *state)
     this->state_->on_entry();
 }
 
+// Execute the current state's behaviour
 void Context::do_work()
 {
     this->state_->on_do();
@@ -32,16 +41,19 @@ void Context::do_work()
 
 // Switch out event1.. with our event names
 
+// Handle a reset command
 void Context::reset()
 {
     this->state_->on_reset();
 }
 
+// Placeholder for a generic transition logic
 void Context::transition()
 {
     this->state_->on_transition();
 }
 
+// Handle a fault detection
 void Context::fault()
 {
     this->state_->on_fault();

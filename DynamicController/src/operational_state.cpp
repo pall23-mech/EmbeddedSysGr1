@@ -18,9 +18,18 @@ void OperationalState::on_entry()
     }
 
     void OperationalState::on_do()
-    {
-        // operational behavior
-        //Serial.println("Motor operating normally");
+    {   
+        unsigned long currentTime = millis();
+
+        // Access shared variables from context
+        unsigned long& controlInterval = context_->getControlInterval();
+        unsigned long& lastControlUpdate = context_->getLastControlUpdate();
+
+        if (currentTime-lastControlUpdate >= controlInterval) {
+            lastControlUpdate = currentTime;
+
+            controlLoop();
+        }
     }
 
     void OperationalState::on_reset()

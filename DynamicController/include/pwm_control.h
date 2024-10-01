@@ -5,6 +5,11 @@
 #include <Arduino.h> // Include Arduino header for types and macros
 #include "encoder.h" // Include the encoder header for encoder functions
 
+// Declare variables as extern so they are initialized in another file
+extern Encoder encoder;
+extern float targetPPS;
+extern unsigned long lastControlUpdate;
+
 // Function to initialize Timer1 for PWM
 void setupPWM_Timer1();
 

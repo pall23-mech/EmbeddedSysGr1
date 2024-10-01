@@ -3,6 +3,10 @@
 
 #include <state.h>
 
+#include <encoder.h>
+#include <pwm_control.h> // Include the PWM control header
+#include <analog_out.h> // Include the Analog_out header
+
 class InitializationState : public State
 {
 public:
