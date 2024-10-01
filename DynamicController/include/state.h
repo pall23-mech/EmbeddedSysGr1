@@ -25,7 +25,8 @@ public:
 
     virtual void on_reset() = 0;
     virtual void on_transition() = 0;
-    // hav one for each action instead of on_eventX()
+    virtual void on_fault() = 0;
+    // have one for each action instead of on_eventX()
 };
 
 #endif // STATE_H

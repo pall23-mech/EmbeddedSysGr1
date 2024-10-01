@@ -1,9 +1,9 @@
-#ifndef INITIALIZATION_STATE_H
-#define INITIALIZATION_STATE_H
+#ifndef STOPPED_STATE_H
+#define STOPPED_STATE_H
 
 #include <state.h>
 
-class InitializationState : public State
+class StoppedState : public State
 {
 public:
     void on_entry() override;
@@ -12,8 +12,8 @@ public:
 
     // change on_eventX to our event names
     void on_reset() override; 
-    void on_transition() override;
+    void on_transition() override; 
     void on_fault() override;
 };
 
-#endif // INITIALIZATION_STATE_H
+#endif // STOPPED_STATE_H

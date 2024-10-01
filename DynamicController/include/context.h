@@ -17,6 +17,7 @@ public:
 
     void reset();
     void transition(); // change later...
+    void fault();
 };
 
 #endif // CONTEXT_H

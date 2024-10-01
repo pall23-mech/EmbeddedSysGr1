@@ -1,41 +1,42 @@
 #include <context.h>
 #include <initialization_state.h>
 #include <operational_state.h>
+#include <stopped_state.h>
 
 
-void OperationalState::on_entry()
+void StoppedState::on_entry()
     {
-        Serial.println("Entering Operational state, available commands:");
+        Serial.println("Entering Stopped state, available commands:");
+        Serial.println("'t' - Transition (transition to Operational)");
         Serial.println("'r' - Reset (transition to Initilaization)");
-        digitalWrite(LED_BUILTIN, HIGH); // Turn LED on in operational state
     }
 
-    void OperationalState::on_exit()
+    void StoppedState::on_exit()
     {
-        Serial.println("Exiting Operational state");
+        Serial.println("Exiting Stopped state");
         digitalWrite(LED_BUILTIN, LOW);
     }
 
-    void OperationalState::on_do()
+    void StoppedState::on_do()
     {
         // operational behavior
-        //Serial.println("Motor operating normally");
+        // Blink at 2 HZ
     }
 
-    void OperationalState::on_reset()
+    void StoppedState::on_reset()
     {
         Serial.println("Reset command, transitioning to Initializaiton state");
         this->context_->transition_to(new InitializationState()); //System reset
     }
 
-    void OperationalState::on_transition()
+    void StoppedState::on_transition()
     {
         //Serial.println("Transition to pre-operational state");
         //this->context_->transition_to(new preOperationalState());
         // Will transition to the preOperationalState later
     }
 
-    void OperationalState::on_fault()
+    void StoppedState::on_fault()
     {
         Serial.println("Fault detection, transitioning to Stopped state");
         this->context_->transition_to(new StoppedState());

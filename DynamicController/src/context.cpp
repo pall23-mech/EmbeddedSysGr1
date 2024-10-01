@@ -41,3 +41,8 @@ void Context::transition()
 {
     this->state_->on_transition();
 }
+
+void Context::fault()
+{
+    this->state_->on_fault();
+}
