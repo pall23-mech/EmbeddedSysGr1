@@ -1,6 +1,7 @@
 #include <context.h>
 #include <initialization_state.h>
 #include <operational_state.h>
+#include <stopped_state.h>
 
 
 void OperationalState::on_entry()

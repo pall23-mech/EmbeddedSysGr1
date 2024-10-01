@@ -1,6 +1,7 @@
 #include <context.h>
 #include <initialization_state.h>
 #include <operational_state.h>
+#include <stopped_state.h>
 
 
 void InitializationState::on_entry()
@@ -32,4 +33,10 @@ void InitializationState::on_entry()
     {
         Serial.println("Event: Transition. Transitioning to Operational...");
         this->context_->transition_to(new OperationalState());
+    }
+
+    void InitializationState::on_fault()
+    {
+        Serial.println("Fault detection, transitioning to Stopped state");
+        this->context_->transition_to(new StoppedState());
     }
