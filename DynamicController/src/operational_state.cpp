@@ -17,23 +17,22 @@ void OperationalState::on_entry()
             // Initialize PWM on Pin D9
         motorPWM.init(1);  // Initialize with a dummy period for now
         Serial.println("PWM initialized on Pin D9.");
-        context_->getDirectionControl().init(1); // Initalize Analog_out (direction control pin)
-        context_->getDirectionControl().set(0); // Set initial direction (forward)
+
 
         Serial.println("Entering Operational state, available commands:");
         Serial.println("'r' - Reset (transition to Initilaization)");
         digitalWrite(LED_BUILTIN, HIGH); // Turn LED on in operational state        context_->getEncoder().init();     // Initialize the encoder
 
-        context_->getDirectionControl().init(1); // Initalize Analog_out (direction control pin)
+        //context_->getDirectionControl().init(1); // Initalize Analog_out (direction control pin)
 
-        context_->getDirectionControl().set(0); // Set initial direction (forward), LOW for forward
+        //context_->getDirectionControl().set(0); // Set initial direction (forward), LOW for forward
 
-        setupPWM_Timer1(); // Set up Timer1 for motor speed control (PWM)
+        //setupPWM_Timer1(); // Set up Timer1 for motor speed control (PWM)
 
         // Initialize the control parameters
-        context_->getTargetPPS() = 2200.0; // Set esired speed
-        context_->getKp() = 2.1; // Set proportional gain for the controller
-        context_->getLastControlUpdate() = millis(); // Initalize the timing variable
+      //  context_->getTargetPPS() = 2200.0; // Set esired speed
+       // context_->getKp() = 2.1; // Set proportional gain for the controller
+       // context_->getLastControlUpdate() = millis(); // Initalize the timing variable
     }
 
     void OperationalState::on_exit()
