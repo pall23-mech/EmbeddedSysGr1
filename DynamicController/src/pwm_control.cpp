@@ -5,6 +5,11 @@
 
 #define CONTROL_PERIOD 3 // Control update every 3ms
 
+// Declare external variables to be used in this file
+extern Encoder encoder; // Encoder object
+extern float targetPPS; // Desired speed
+extern unsigned long lastControlUpdate; // Time of the last control update
+
 // Create an Analog_out instance for the PWM pin
 Analog_out motorPWM(9); // Use pin 9 for PWM control
 
