@@ -8,9 +8,9 @@ public:
     P_controller(float Kp_value);
     
     // Update function to compute control signal
-    double update(double ref, double actual);
+    virtual double update(double ref, double actual);
 
-private:
+protected:
     float Kp; // Proportional gain
 };
 

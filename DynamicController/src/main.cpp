@@ -15,8 +15,7 @@ void setup()
   context = new Context(new InitializationState()); // Start in Initialization state
   pinMode(LED_BUILTIN, OUTPUT); // Set LED pin as output
   pinMode(FLT_PIN, INPUT); // Set FLT pin as input
-  //pinMode(FLT_PIN, INPUT_PULLUP); // use pull-up for the emergency stop button  (if button not connected, comment this out, else you enter the fault state)
-}
+ }
 
 void loop()
 {
