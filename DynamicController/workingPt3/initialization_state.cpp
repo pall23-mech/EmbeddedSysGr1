@@ -22,7 +22,7 @@ void InitializationState::on_entry()
         setupPWM_Timer1(); // Set up Timer1 for motor speed control (PWM)
 
         // Initialize the control parameters
-        context_->getTargetPPS() = 80000.0; // Set esired speed
+        context_->getTargetPPS() = 2200.0; // Set esired speed
         context_->getKp() = 2.1; // Set proportional gain for the controller
         context_->getLastControlUpdate() = millis(); // Initalize the timing variable
 

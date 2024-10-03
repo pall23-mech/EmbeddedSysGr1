@@ -3,10 +3,10 @@
 #include "analog_out.h"  // Include the analog out header
 #include "p_controller.h" // Include the P_controller header
 #include "pi_controller.h"
-
+#define CONTROL_PERIOD 3 // Control update every 3ms
 // Create a PI_Controller instance (with Kp, Ti, and T_step)
 PI_Controller piController(2.1, 0.5, 0.01);  // Example values
-#define CONTROL_PERIOD 3 // Control update every 3ms
+
 
 // Declare external variables to be used in this file
 extern Encoder encoder; // Encoder object
@@ -39,6 +39,9 @@ void controlLoop() {  // change to controlLoop() again later....
         // Use the PI_Controller to calculate the control signal
         double controlSignal = piController.update(targetPPS, actualPPS);
 
+        if (controlSignal > 1){
+            controlSignal = 1;
+        }
         // Ensure the control signal is scaled appropriately for the motorPWM (assuming it expects 0.0 to 1.0 range)
         float dutyCycle = constrain(controlSignal / targetPPS, 0.0, 1.0);  // Normalize to PWM range
 
