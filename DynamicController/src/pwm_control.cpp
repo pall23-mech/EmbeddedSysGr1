@@ -23,6 +23,12 @@ void setupPWM_Timer1() {
     motorPWM.init(2); // Assuming a period of 2 ms (500 Hz) for the PWM signal
 }
 
+void stopMotor() {
+    // Set the duty cycle to 0 to stop the motor
+    motorPWM.set(0.0);
+    Serial.println("Motor stopped, PWM duty cycle set to 0.");
+}
+
 void controlLoop() {
     unsigned long currentTime = millis();
 

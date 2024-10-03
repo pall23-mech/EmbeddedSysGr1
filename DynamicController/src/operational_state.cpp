@@ -22,7 +22,13 @@ void OperationalState::on_entry()
     void OperationalState::on_exit()
     {
         Serial.println("Exiting Operational state");
-        digitalWrite(LED_BUILTIN, LOW);
+        digitalWrite(LED_BUILTIN, LOW);  // Turn off LED
+
+        // Stop the motor by setting PWM duty cycle to 0
+        stopMotor();  // Call the new stop function to stop the motor
+
+        // Optionally re-initialize the encoder or other components
+        encoder.init();
     }
 
     void OperationalState::on_do()

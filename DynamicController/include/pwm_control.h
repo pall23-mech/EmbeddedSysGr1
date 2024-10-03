@@ -13,7 +13,7 @@ extern unsigned long lastControlUpdate;
 
 // Function to initialize Timer1 for PWM
 void setupPWM_Timer1();
-
+void stopMotor();
 // Control loop for PWM adjustment
 void controlLoop();
 
