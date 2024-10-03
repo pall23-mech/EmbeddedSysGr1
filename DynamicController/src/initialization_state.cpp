@@ -8,7 +8,7 @@ void InitializationState::on_entry()
     {
         digitalWrite(LED_BUILTIN, LOW); //initialize system, just LED for now
         Serial.println("Entering Initialization state; Initializing parameters...");
-        Serial.println("Available commrands:"); // will be taken out (no commmands in this state?)
+        Serial.println("Available commands:"); // will be taken out (no commmands in this state?)
         Serial.println("'t' - Transition (transition to Operational)"); // Will be autononmous later
 
         // initailize here
@@ -22,7 +22,7 @@ void InitializationState::on_entry()
         setupPWM_Timer1(); // Set up Timer1 for motor speed control (PWM)
 
         // Initialize the control parameters
-        context_->getTargetPPS() = 2200.0; // Set esired speed
+        context_->setTargetPPS(2200.0); // Set desired speed
         context_->getKp() = 2.1; // Set proportional gain for the controller
         context_->getLastControlUpdate() = millis(); // Initalize the timing variable
 
@@ -38,7 +38,7 @@ void InitializationState::on_entry()
 
     void InitializationState::on_do()
     {
-        // initialization behavior
+
     }
 
     void InitializationState::on_reset()

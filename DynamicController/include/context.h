@@ -35,6 +35,7 @@ public:
     Analog_out& getDirectionControl() {return directionControl;}
     float& getTargetPPS() {return targetPPS;}
     float& getKp() {return Kp;}
+    void setTargetPPS(float target) {targetPPS = target;}
     unsigned long& getLastControlUpdate() {return lastControlUpdate;}
     unsigned long& getControlInterval() {return controlInterval;}
 };

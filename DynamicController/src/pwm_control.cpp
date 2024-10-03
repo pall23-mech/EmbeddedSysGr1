@@ -2,7 +2,10 @@
 #include "pwm_control.h" // Include the corresponding header file
 #include "analog_out.h"  // Include the analog out header
 #include "p_controller.h" // Include the P_controller header
+#include "pi_controller.h"
 
+// Create a PI_Controller instance (with Kp, Ti, and T_step)
+PI_Controller piController(2.1, 0.5, 0.01);  // Example values
 #define CONTROL_PERIOD 3 // Control update every 3ms
 
 // Declare external variables to be used in this file
@@ -24,16 +27,16 @@ void setupPWM_Timer1() {
 void controlLoop() {
     unsigned long currentTime = millis();
 
-    if (currentTime - lastControlUpdate >= CONTROL_PERIOD) { // Control update every 3 ms
-        encoder.updateSpeed(); // Update the speed (PPS and RPM) based on the current position and time
+    if (currentTime - lastControlUpdate >= CONTROL_PERIOD) {  // Control update every 3 ms
+        encoder.updateSpeed();  // Update the speed (PPS and RPM) based on the current position and time
 
         float actualPPS = encoder.speedPPS();
         
-        // Use the P_controller to calculate the control signal
-        double controlSignal = pController.update(targetPPS, actualPPS);
+        // Use the PI_Controller to calculate the control signal
+        double controlSignal = piController.update(targetPPS, actualPPS);
 
-        // Calculate the duty cycle and constrain it within the allowed range (0.0 to 1.0 for Analog_out)
-        float dutyCycle = constrain(controlSignal / targetPPS, 0.0, 1.0);
+        // Ensure the control signal is scaled appropriately for the motorPWM (assuming it expects 0.0 to 1.0 range)
+        float dutyCycle = constrain(controlSignal / 100.0, 0.0, 1.0);  // Normalize to PWM range
 
         // Set the PWM duty cycle using Analog_out
         motorPWM.set(dutyCycle);
@@ -46,8 +49,9 @@ void controlLoop() {
         Serial.println(actualPPS);
 
         Serial.print("Control Signal (PWM Duty): ");
-        Serial.println(dutyCycle * 100); // Display as percentage
+        Serial.println(dutyCycle * 100);  // Display as percentage
 
+        // Update last control time
         lastControlUpdate = currentTime;
     }
 }
