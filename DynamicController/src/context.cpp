@@ -4,13 +4,13 @@
 #include <pwm_control.h>
 
 // Define the extern varialbes to match their usage in pwm_control.cpp
-Encoder encoder(16, 17, 1400.0);  // Define encoder instance
-float targetPPS = 2800.0;            // Define targetPPS
-unsigned long lastControlUpdate = 0; // Define lastControlUpdate
+Encoder encoder(16, 17, 1400.0);
+unsigned long lastControlUpdate = 0;
 
 Context::Context(State *state) : state_(nullptr), encoder(16, 17, 1400.0), directionControl(8)
 {
     // Initialize state and set the context
+    targetPPS = 0.0;
     this->transition_to(state);
 }
 

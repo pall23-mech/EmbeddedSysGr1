@@ -2,10 +2,10 @@
 #include "pwm_control.h" // Include the corresponding header file
 #include "analog_out.h"  // Include the analog out header
 #include "p_controller.h" // Include the P_controller header
+#include <context.h>
 
 // Declare external variables to be used in this file
 extern Encoder encoder; // Encoder object
-extern float targetPPS; // Desired speed
 extern float Kp;
 extern unsigned long lastControlUpdate; // Time of the last control update
 
@@ -18,19 +18,21 @@ Analog_out motorPWM(9); // Use pin 9 for PWM control
 P_controller pController(2.5); // Use the desired Kp value
 
 
-void setupPWM_Timer1() {
+void PwmControl::setupPWM_Timer1() {
     // Initialize the analog output (PWM) with a period
     motorPWM.init(2); // Assuming a period of 2 ms (500 Hz) for the PWM signal
 }
 
-void stopMotor() {
+void PwmControl::stopMotor() {
     // Set the duty cycle to 0 to stop the motor
     motorPWM.set(0.0);
     Serial.println("Motor stopped, PWM duty cycle set to 0.");
 }
 
-void controlLoop() {
+void PwmControl::controlLoop() {
     unsigned long currentTime = millis();
+    float targetPPS = context_->getTargetPPS();
+    float Kp = context_->getKp();
 
     if (currentTime - lastControlUpdate >= CONTROL_PERIOD) { // Control update every 3 ms
         encoder.updateSpeed(); // Update the speed (PPS and RPM) based on the current position and time

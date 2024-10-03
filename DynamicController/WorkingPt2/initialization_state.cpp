@@ -2,6 +2,7 @@
 #include <initialization_state.h>
 #include <operational_state.h>
 #include <stopped_state.h>
+#include <pwm_control.h>
 
 
 void InitializationState::on_entry()
@@ -21,11 +22,18 @@ void InitializationState::on_entry()
 
         context_->getDirectionControl().set(0); // Set initial direction (forward), LOW for forward
 
-        setupPWM_Timer1(); // Set up Timer1 for motor speed control (PWM)
+        PwmControl* pwmControl = new PwmControl(context_);
+
+        pwmControl->setupPWM_Timer1(); // Set up Timer1 for motor speed control (PWM)
+        context_->setPwmControl(pwmControl);
 
         // Initialize the control parameters
         context_->setTargetPPS(2200.0); // Set desired speed
-        context_->setKp(2.1); // Set proportional gain for the controller
+        context_->getTargetPPS();
+
+        context_->setKp(2.3); // Set proportional gain for the controller
+        //float K_p = context_->getKp(); 
+
         // we will later set Ti and T variables as well
         //context_->setTi(2);
         //context_->setT(2);
@@ -34,6 +42,7 @@ void InitializationState::on_entry()
         // we will later implement below: (take out transition..)
         //Serial.println("Initalization complete, transitioning to Pre-Operational State.");
         //this->context_->transition_to(new OperationalState());
+
     }
 
     void InitializationState::on_exit()
