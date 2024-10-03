@@ -4,6 +4,7 @@
 
 #include <Arduino.h> // Include Arduino header for types and macros
 #include "encoder.h" // Include the encoder header for encoder functions
+#include <context.h>
 
 // Declare variables as extern so they are initialized in another file
 extern Encoder encoder;

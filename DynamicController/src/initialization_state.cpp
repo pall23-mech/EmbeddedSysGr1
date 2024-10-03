@@ -13,6 +13,8 @@ void InitializationState::on_entry()
 
         // initailize here
 
+        // should we initalize the pwm controller here?
+
         context_->getEncoder().init();     // Initialize the encoder
 
         context_->getDirectionControl().init(1); // Initalize Analog_out (direction control pin)
@@ -23,7 +25,10 @@ void InitializationState::on_entry()
 
         // Initialize the control parameters
         context_->setTargetPPS(2200.0); // Set desired speed
-        context_->getKp() = 2.1; // Set proportional gain for the controller
+        context_->setKp(2.1); // Set proportional gain for the controller
+        // we will later set Ti and T variables as well
+        //context_->setTi(2);
+        //context_->setT(2);
         context_->getLastControlUpdate() = millis(); // Initalize the timing variable
 
         // we will later implement below: (take out transition..)

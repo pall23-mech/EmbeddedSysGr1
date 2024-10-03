@@ -16,6 +16,8 @@ private:
     Analog_out directionControl; // Direction control pin for motor
     float targetPPS; // Target speed in pulses per second
     float Kp; // Proportional gain
+    float Ti; // Integration time parameter
+    float T; // Time-step parameter
     unsigned long lastControlUpdate; // Last control loop update time
     unsigned long controlInterval; // Control loop interval
 
@@ -34,8 +36,13 @@ public:
     Encoder& getEncoder() {return encoder;}
     Analog_out& getDirectionControl() {return directionControl;}
     float& getTargetPPS() {return targetPPS;}
-    float& getKp() {return Kp;}
     void setTargetPPS(float target) {targetPPS = target;}
+    float& getKp() {return Kp;}
+    void setKp(float p) {Kp = p;}
+    float& getTi() {return Ti;}
+    void setTi(float i) {Ti = i;}
+    float& getT() {return T;}
+    void setT(float t) {T = t;}
     unsigned long& getLastControlUpdate() {return lastControlUpdate;}
     unsigned long& getControlInterval() {return controlInterval;}
 };

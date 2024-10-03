@@ -5,7 +5,7 @@
 
 // Define the extern varialbes to match their usage in pwm_control.cpp
 Encoder encoder(16, 17, 1400.0);
-//float targetPPS = 0.0;
+float targetPPS = 2200.0; // NEED TO CHANGE AND FIX
 unsigned long lastControlUpdate = 0;
 
 Context::Context(State *state) : state_(nullptr), encoder(16, 17, 1400.0), directionControl(8)
