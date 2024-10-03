@@ -4,6 +4,8 @@
 #include <encoder.h>
 #include <Analog_out.h>
 
+class PwmControl;
+
 class State;
 
 class Context
@@ -14,6 +16,7 @@ private:
     // Shared variables
     Encoder encoder; // Encoder object
     Analog_out directionControl; // Direction control pin for motor
+    PwmControl* pwmControl;
     float targetPPS; // Target speed in pulses per second
     float Kp; // Proportional gain
     float Ti; // Integration time parameter
@@ -43,8 +46,12 @@ public:
     void setTi(float i) {Ti = i;}
     float& getT() {return T;}
     void setT(float t) {T = t;}
+    void setPwmControl(PwmControl* control) {pwmControl = control;}
+    PwmControl* getPwmControl() {return pwmControl;}
     unsigned long& getLastControlUpdate() {return lastControlUpdate;}
     unsigned long& getControlInterval() {return controlInterval;}
 };
+
+#include <pwm_control.h>
 
 #endif // CONTEXT_H
