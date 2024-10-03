@@ -2,6 +2,7 @@
 #include "pwm_control.h" // Include the corresponding header file
 #include "analog_out.h"  // Include the analog out header
 #include "p_controller.h" // Include the P_controller header
+#include <context.h> // Include the P_controller header
 #include "pi_controller.h"
 #define CONTROL_PERIOD 3 // Control update every 3ms
 // Create a PI_Controller instance (with Kp, Ti, and T_step)
@@ -10,7 +11,9 @@ PI_Controller piController(2.1, 0.5, 0.01);  // Example values
 
 // Declare external variables to be used in this file
 extern Encoder encoder; // Encoder object
-extern float targetPPS; // Desired speed
+extern float Kp;
+extern float Ti;
+extern float T;
 extern unsigned long lastControlUpdate; // Time of the last control update
 
 // Create an Analog_out instance for the PWM pin
@@ -28,9 +31,12 @@ void stopMotor() {
     motorPWM.set(0.0);
     Serial.println("Motor stopped, PWM duty cycle set to 0.");
 }
-void controlLoop() {  // change to controlLoop() again later....
+void PwmControl::controlLoop() {  // change to controlLoop() again later....
     unsigned long currentTime = millis();
-
+    float targetPPS = context_->getTargetPPS();
+    float Kp = context_->getKp();
+    float Ti = context_->getTi(); //make this method
+    float T = context_->getT();  
     if (currentTime - lastControlUpdate >= CONTROL_PERIOD) {  // Control update every 3 ms
         encoder.updateSpeed();  // Update the speed (PPS and RPM) based on the current position and time
 
@@ -39,8 +45,8 @@ void controlLoop() {  // change to controlLoop() again later....
         // Use the PI_Controller to calculate the control signal
         double controlSignal = piController.update(targetPPS, actualPPS);
 
-        if (controlSignal > 1){
-            controlSignal = 1;
+        if (controlSignal > 100){
+            controlSignal = 100;
         }
         // Ensure the control signal is scaled appropriately for the motorPWM (assuming it expects 0.0 to 1.0 range)
         float dutyCycle = constrain(controlSignal / targetPPS, 0.0, 1.0);  // Normalize to PWM range
