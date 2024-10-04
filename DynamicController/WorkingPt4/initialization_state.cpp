@@ -22,7 +22,7 @@ void InitializationState::on_entry()
         context_->getDirectionControl().set(0); // Set initial direction (forward), LOW for forward
 
         // Initialize the control parameters
-        context_->setTargetPPS(2000.0); // Set desired speed
+        context_->setTargetPPS(2200.0); // Set desired speed
         context_->getTargetPPS();
 
         context_->getLastControlUpdate() = millis(); // Initalize the timing variable

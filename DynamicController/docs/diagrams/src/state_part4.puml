@@ -1,27 +1,39 @@
-@startuml State 1
+@startuml State 2
 
 state "Initialization" as I #LightBlue
+I : entry / StartUp or Reset
+I : do / Initialization
+I : exit / Transition (set pre-operational)
 
 state "PreOperational" as P #Orange
+P : entry / Transition (set pre-operational)
+P : do / LED blinking at 1 Hz, configure
+P : exit / Transition (set operational), Reset or Fault detected
 
 state "Operational" as O #MediumSeaGreen
+O : entry / Transition
+O : do / LED on, device working
+O : exit / Reset or Fault detected
 
 state "Stopped" as S #IndianRed
+S : entry / Fault detected
+S : do / LED blinking at 2 Hz
+S : exit / Transition (set operational or set pre-operational) or Reset
 
 
-P --> O
-P --> I
-P --> S
+O --> I : Reset
+O --> S : Fault detected
+O --> P : Set pre-operational
 
-O --> P
-O --> I
-O --> S
+I --> P : Set pre-operational
 
-S --> O
-S --> P
-S --> I
+S --> O : Set operational
+S --> I : Reset
+S --> P : Set pre-operational
 
-I --> P : ID | Boot-up
+P --> O : Set operational
+P --> S : Fault detected
+P --> I : Reset
 
 
 @enduml

@@ -3,7 +3,7 @@
 state "Initialization" as I #LightBlue
 I : entry / StartUp or Reset
 I : do / Initialization
-I : exit / Transition or Fault detected
+I : exit / Transition
 
 state "Operational" as O #MediumSeaGreen
 O : entry / Transition
@@ -11,9 +11,9 @@ O : do / LED on, device working
 O : exit / Reset or Fault detected
 
 state "Stopped" as S #IndianRed
-O : entry / Fault detected
-O : do / LED blinking at 2 Hz
-O : exit / Transition
+S : entry / Fault detected
+S : do / LED blinking at 2 Hz
+S : exit / Transition (set operational) or Reset
 
 
 O --> I : Reset

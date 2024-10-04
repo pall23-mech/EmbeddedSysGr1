@@ -13,7 +13,6 @@ PI_Controller piController(2.1, 0.5, 0.01);  // Example values
 extern Encoder encoder; // Encoder object
 extern float Kp;
 extern float Ti;
-extern float T;
 extern unsigned long lastControlUpdate; // Time of the last control update
 
 // Create an Analog_out instance for the PWM pin
@@ -22,11 +21,11 @@ Analog_out motorPWM(9); // Use pin 9 for PWM control
 // Create a P_controller instance (move Kp from main to here)
 P_controller pController(2.5); // Use the desired Kp value
 
-void setupPWM_Timer1() {
+void PwmControl::setupPWM_Timer1() {
     // Initialize the analog output (PWM) with a period
     motorPWM.init(2); // Assuming a period of 2 ms (500 Hz) for the PWM signal
 }
-void stopMotor() {
+void PwmControl::stopMotor() {
     // Set the duty cycle to 0 to stop the motor
     motorPWM.set(0.0);
     Serial.println("Motor stopped, PWM duty cycle set to 0.");
@@ -35,8 +34,8 @@ void PwmControl::controlLoop() {  // change to controlLoop() again later....
     unsigned long currentTime = millis();
     float targetPPS = context_->getTargetPPS();
     float Kp = context_->getKp();
-    float Ti = context_->getTi(); //make this method
-    float T = context_->getT();  
+    float Ti = context_->getTi();
+
     if (currentTime - lastControlUpdate >= CONTROL_PERIOD) {  // Control update every 3 ms
         encoder.updateSpeed();  // Update the speed (PPS and RPM) based on the current position and time
 
