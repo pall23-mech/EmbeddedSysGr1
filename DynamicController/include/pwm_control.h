@@ -4,17 +4,24 @@
 
 #include <Arduino.h> // Include Arduino header for types and macros
 #include "encoder.h" // Include the encoder header for encoder functions
-#include <context.h>
 
-// Declare variables as extern so they are initialized in another file
-extern Encoder encoder;
-extern float targetPPS;
-extern unsigned long lastControlUpdate;
+class Context;
 
-// Function to initialize Timer1 for PWM
-void setupPWM_Timer1();
-void stopMotor();
-// Control loop for PWM adjustment
-void controlLoop();
+class PwmControl {
+private: 
+    Context* context_; // Pointer to Context
+
+public:
+
+    PwmControl(Context* ctx) : context_(ctx) {}
+
+    // Function to initialize Timer1 for PWM
+    void setupPWM_Timer1();
+    void stopMotor();
+    
+    // Control loop for PWM adjustment
+    void controlLoop();
+    
+};
 
 #endif // PWM_CONTROL_H
