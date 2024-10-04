@@ -20,7 +20,6 @@ private:
     float targetPPS; // Target speed in pulses per second
     float Kp; // Proportional gain
     float Ti; // Integration time parameter
-    float T; // Time-step parameter
     unsigned long lastControlUpdate; // Last control loop update time
     unsigned long controlInterval; // Control loop interval
 
