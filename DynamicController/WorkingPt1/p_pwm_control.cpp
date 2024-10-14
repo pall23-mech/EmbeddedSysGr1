@@ -32,12 +32,7 @@ void PwmControl::stopMotor() {
 void PwmControl::controlLoop() {
     unsigned long currentTime = millis();
     float targetPPS = context_->getTargetPPS();
-    Encoder& encoder = context_->getEncoder(); // Encoder object
-    unsigned long lastControlUpdate; // Time of the last control update
-    //float Kp = context_->getKp();
-    //float Ti = context_->getTi();
-    //Serial.println(Kp);
-    //Serial.println(Ti);
+    float Kp = context_->getKp();
 
     if (currentTime - lastControlUpdate >= CONTROL_PERIOD) { // Control update every 3 ms
         encoder.updateSpeed(); // Update the speed (PPS and RPM) based on the current position and time

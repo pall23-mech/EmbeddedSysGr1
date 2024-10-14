@@ -48,23 +48,7 @@ void Context::reset()
 }
 
 // Placeholder for a generic transition logic
-void Context::pre_transition()
+void Context::transition()
 {
-    this->state_->on_pre_transition();
-}
-
-void Context::op_transition()
-{
-    this->state_->on_op_transition();
-}
-
-// Handle a fault detection
-void Context::fault()
-{
-    this->state_->on_fault();
-}
-
-void Context::configure()
-{
-    this->state_->on_configure();
+    this->state_->on_transition();
 }

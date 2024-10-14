@@ -16,10 +16,7 @@ public:
 
     // change on_eventX to our event names
     void on_reset() override; 
-    void on_pre_transition() override;
-    void on_op_transition() override;
-    void on_fault() override;
-    void on_configure() override;
+    void on_transition() override;
 };
 
 #endif // INITIALIZATION_STATE_H

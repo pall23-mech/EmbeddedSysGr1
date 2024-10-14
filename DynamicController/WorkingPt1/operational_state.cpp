@@ -1,8 +1,6 @@
 #include <context.h>
 #include <initialization_state.h>
 #include <operational_state.h>
-#include <stopped_state.h>
-#include <pre_operational_state.h>
 #include "analog_out.h"  // Include the analog out header
 
 extern Encoder encoder;
@@ -15,7 +13,6 @@ void OperationalState::on_entry()
     {
         Serial.println("Entering Operational state, available commands:");
         Serial.println("'r' - Reset (transition to Initilaization)");
-        Serial.println("'p' - Transition (transition to PreOperational)");
         digitalWrite(LED_BUILTIN, HIGH); // Turn LED on in operational state
 
         motorPWM.init(1);
@@ -44,24 +41,9 @@ void OperationalState::on_entry()
         this->context_->transition_to(new InitializationState()); //System reset
     }
 
-    void OperationalState::on_pre_transition()
+    void OperationalState::on_transition()
     {
-        Serial.println("Transition to pre-operational state");
-        this->context_->transition_to(new PreOperationalState());
-    }
-
-    void OperationalState::on_op_transition()
-    {
-
-    }
-
-    void OperationalState::on_fault()
-    {
-        Serial.println("Fault detection, transitioning to Stopped state");
-        this->context_->transition_to(new StoppedState());
-    }
-
-    void OperationalState::on_configure()
-    {
-        
+        //Serial.println("Transition to pre-operational state");
+        //this->context_->transition_to(new preOperationalState());
+        // Will transition to the preOperationalState later
     }

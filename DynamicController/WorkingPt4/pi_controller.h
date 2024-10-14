@@ -1,4 +1,3 @@
-// pi_controller.h
 #ifndef PI_CONTROLLER_H
 #define PI_CONTROLLER_H
 
@@ -15,6 +14,9 @@ private:
     float Ti;     // Integration time constant
     float T;      // Time step for integration
     double integralError;  // Accumulated error (integral of error)
+
+    // Declare isSaturated method
+    bool isSaturated(double controlSignal);  // <--- Add this line to the class declaration
 };
 
 #endif // PI_CONTROLLER_H

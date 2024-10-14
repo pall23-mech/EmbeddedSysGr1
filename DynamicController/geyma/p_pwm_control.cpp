@@ -4,11 +4,6 @@
 #include "p_controller.h" // Include the P_controller header
 #include <context.h>
 
-// Declare external variables to be used in this file
-extern Encoder encoder; // Encoder object
-extern float Kp;
-extern unsigned long lastControlUpdate; // Time of the last control update
-
 #define CONTROL_PERIOD 3 // Control update every 3ms
 
 // Create an Analog_out instance for the PWM pin
@@ -34,6 +29,7 @@ void PwmControl::controlLoop() {
     float targetPPS = context_->getTargetPPS();
     Encoder& encoder = context_->getEncoder(); // Encoder object
     unsigned long lastControlUpdate; // Time of the last control update
+
     //float Kp = context_->getKp();
     //float Ti = context_->getTi();
     //Serial.println(Kp);

@@ -23,10 +23,6 @@ void loop()
 
   context->do_work(); // Execute current state's behavior
 
-  if (digitalRead(FLT_PIN) == HIGH) {
-    context->fault(); // If FLT pin is high, a fault is detected, transition to Stopped state
-  }
-
   // send data only when you receive data:
   if (Serial.available() > 0)
   {
@@ -40,20 +36,8 @@ void loop()
       context->reset(); // reset, in operational to initialization
       break;
     
-    case 'p':
-      context->pre_transition(); // transition, in initialization to operational
-      break;
-
-    case 'o':
-      context->op_transition();
-      break;
-
-    case 'f':
-      context->fault(); // fault detection (we will comment this line out, should be detected on the device...)
-      break;
-
-    case 'c':
-      context->configure();
+    case 't':
+      context->transition(); // transition, in initialization to operational
       break;
 
     default:
