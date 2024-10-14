@@ -11,6 +11,7 @@ bool last_stateA = false;
 bool last_stateB = false;
 static int pulses_per_rev;
 
+
 // Interrupt Service Routine
 ISR(PCINT1_vect)
 {
