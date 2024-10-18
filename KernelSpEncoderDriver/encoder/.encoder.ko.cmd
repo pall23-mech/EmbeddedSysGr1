@@ -1,0 +1,1 @@
+savedcmd_/home/pall23/Proj4/encoder/encoder.ko := ld -r -EL  -maarch64elf -z noexecstack --no-warn-rwx-segments --build-id=sha1  -T arch/arm64/module.lds -o /home/pall23/Proj4/encoder/encoder.ko /home/pall23/Proj4/encoder/encoder.o /home/pall23/Proj4/encoder/encoder.mod.o;  true
