@@ -1,13 +1,49 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <time.h>
+#include <stdlib.h>
 #include "pi_control.h"       // Include the PI controller header
 #include "pi_pwm_control.h"   // Include the PWM control header
 
-// Function to simulate reading encoder speed (for testing, replace with real encoder read)
+// Sysfs paths for encoder data
+#define SYSFS_PATH "/sys/kernel/encoder/"
+#define POSITION_FILE "position"
+#define PPS_FILE "pps"
+#define RPM_FILE "rpm"
+
+// Function to read a value from a sysfs file
+int read_sysfs_value(const char *file, int *value) {
+    char path[256];
+    FILE *fp;
+
+    // Construct the full path to the sysfs file
+    snprintf(path, sizeof(path), "%s%s", SYSFS_PATH, file);
+    fp = fopen(path, "r");
+    if (fp == NULL) {
+        perror("Error opening sysfs file");
+        return -1;
+    }
+
+    // Read the integer value from the file
+    if (fscanf(fp, "%d", value) != 1) {
+        perror("Error reading value from sysfs file");
+        fclose(fp);
+        return -1;
+    }
+
+    fclose(fp);
+    return 0;
+}
+
+// Function to read the encoder speed from sysfs
 float read_encoder_speed() {
-    // TODO: Replace with code that reads from your encoder
-    return 100.0; // Example value
+    int pps;
+    if (read_sysfs_value(PPS_FILE, &pps) == 0) {
+        return (float)pps;
+    } else {
+        printf("Warning: Unable to read PPS from sysfs.\n");
+        return -1.0; // Return an invalid value to indicate an error
+    }
 }
 
 // Main function
@@ -31,7 +67,7 @@ int main() {
 
         // Read the current speed from the encoder
         float current_speed = read_encoder_speed();
-        
+
         // Ensure current_speed is valid, if not print a debug message
         if (current_speed < 0) {
             printf("Warning: Invalid encoder speed read: %.2f\n", current_speed);
@@ -40,7 +76,7 @@ int main() {
 
         // Update the PI controller
         float control_signal = pi_controller_update(&controller, current_speed, elapsed_time);
-        
+
         // Convert control signal to PWM value (scale to 0-255 for pigpio)
         int pwm_value = (int)(control_signal * 255 / 1023);
         if (pwm_value < 0) pwm_value = 0;

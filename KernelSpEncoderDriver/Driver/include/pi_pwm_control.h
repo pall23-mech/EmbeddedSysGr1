@@ -6,8 +6,8 @@
 #define PWM_PIN2 13
 
 // Function prototypes
-void pwm_init();
+void pwm_init(void);
 void pwm_set(int pin, int value);
-void pwm_cleanup();
+void pwm_cleanup(void);
 
 #endif // PWM_CONTROL_H
