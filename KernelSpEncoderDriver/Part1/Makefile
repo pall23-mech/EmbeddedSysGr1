@@ -1,4 +1,4 @@
-obj-m += ReadW_interrupt.o
+obj-m += ReadW_2interrupt.o
 KDIR := /lib/modules/$(shell uname -r)/build
 PWD := $(shell pwd)
 
