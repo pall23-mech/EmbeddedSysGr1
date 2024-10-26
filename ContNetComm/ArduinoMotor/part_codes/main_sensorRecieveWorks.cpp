@@ -8,7 +8,7 @@
 #include "PI_controller.h"
 
 Timer_msec timer;
-Digital_out motorIN2(0);  // Motor direction control pin D8
+Digital_out motorIN2(0);  // Motor control pin D8
 Analog_out motorIN1(1);   // Motor PWM control pin D9
 Encoder encoder(3, 4);    // Encoder pins D11, D12
 float kp = 0.01;
@@ -34,9 +34,6 @@ void setup() {
     motorIN1.init(10);    // Set PWM interval to 10 ms
     motorIN1.set(0);      // Start with zero duty cycle
     motorIN2.set_lo();    // Ensure motor is stopped initially
-
-    // Initial Debug Message
-    Serial.println("Motor Receiving Arduino Setup Complete.");
 }
 
 void loop() {
@@ -49,26 +46,13 @@ void loop() {
     }
 
     if (newCommand) {
-        // Validate and parse the command if it starts with "MO:"
+        // Parse the command if it starts with "MO:"
         if (strncmp(command, "MO:", 3) == 0) {
-            int sensorValue = atoi(command + 3); // Extract value after "MO:"
-            if (sensorValue >= 0 && sensorValue <= 120) { // Validate range
-                // Map sensorValue from range 0-120 to 0-3500 RPM
-                ref = map(sensorValue, 0, 120, 0, 3500); 
-                
-                // Debug information for received and mapped values
-                Serial.print("Valid Command Received | Sensor Value: ");
-                Serial.print(sensorValue);
-                Serial.print(" -> Target Speed (RPM): ");
-                Serial.println((int)ref);
-            } else {
-                // If out of expected range, print an error
-                Serial.print("Error: Out of Range Sensor Value: ");
-                Serial.println(sensorValue);
-            }
+            ref = atoi(command + 3); // Convert the number after "MO:" to integer
+            Serial.print("MO :Reference set to ");
+            Serial.println((int)ref);
         } else {
-            // Print an error if the command format is unexpected
-            Serial.print("Error: Unknown Command Format Received: ");
+            Serial.print("MO :Unknown command: ");
             Serial.println(command);
         }
         newCommand = false;
@@ -80,15 +64,6 @@ void loop() {
     u = constrain(u, 0.0, 0.999);     // Ensure PWM is within [0, 1]
     pwmValue = u;
     motorIN1.set(pwmValue);           // Update motor PWM with control signal
-
-    // Periodic debug message for motor control values
-    if (millis() - lastPrintTime >= 500) {
-        Serial.print("Actual Speed (RPM): ");
-        Serial.print(actual);
-        Serial.print(" | PWM Duty Cycle: ");
-        Serial.println(pwmValue);
-        lastPrintTime = millis();
-    }
 
     encoder.update();
     _delay_ms(3);                     // Small delay for stability
