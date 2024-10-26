@@ -1,0 +1,74 @@
+Target PPS: 2800.00
+Actual PPS: 0.00
+Control Signal (PWM Duty): 100.00
+Target PPS: 2800.00
+Actual PPS: 0.00
+Control Signal (PWM Duty): 100.00
+Target PPS: 2800.00
+Actual PPS: 500.00
+Control Signal (PWM Duty): 100.00
+Target PPS: 2800.00
+Actual PPS: 285.71
+Control Signal (PWM Duty): 100.00
+Target PPS: 2800.00
+Actual PPS: 333.33
+Control Signal (PWM Duty): 100.00
+Target PPS: 2800.00
+Actual PPS: 333.33
+Control Signal (PWM Duty): 100.00
+Target PPS: 2800.00
+Actual PPS: 250.00
+Control Signal (PWM Duty): 100.00
+Target PPS: 2800.00
+Actual PPS: 333.33
+Control Signal (PWM Duty): 100.00
+Target PPS: 2800.00
+Actual PPS: 166.67
+Control Signal (PWM Duty): 100.00
+Target PPS: 2800.00
+Actual PPS: 428.57
+Control Signal (PWM Duty): 100.00
+Target PPS: 2800.00
+Actual PPS: 1000.00
+Control Signal (PWM Duty): 100.00
+Target PPS: 2800.00
+Actual PPS: 1333.33
+Control Signal (PWM Duty): 100.00
+Target PPS: 2800.00
+Actual PPS: 1428.57
+Control Signal (PWM Duty): 100.00
+Target PPS: 2800.00
+Actual PPS: 1571.43
+Control Signal (PWM Duty): 100.00
+Target PPS: 2800.00
+Actual PPS: 2166.67
+Control Signal (PWM Duty): 56.55
+Target PPS: 2800.00
+Actual PPS: 1857.14
+Control Signal (PWM Duty): 84.18
+Target PPS: 2800.00
+Actual PPS: 2333.33
+Control Signal (PWM Duty): 41.67
+Target PPS: 2800.00
+Actual PPS: 2500.00
+Control Signal (PWM Duty): 26.79
+Target PPS: 2800.00
+Actual PPS: 2285.71
+Control Signal (PWM Duty): 45.92
+Target PPS: 2800.00
+Actual PPS: 2285.71
+Control Signal (PWM Duty): 45.92
+Target PPS: 2800.00
+Actual PPS: 2666.67
+ontrol Signal (PWM Duty): 11.90
+Target PPS: 2800.00
+Actual PPS: 228.57
+Control Signal (PWM Duty): 33.16
+Target PPS: 2800.00
+Actual PPS: 300.00
+Control Signal (PWM Duty): 0.00
+Target PPS: 2800.00
+Actual PPS: 2833.33
+Control Signal (PWM Duty): 0.00
+Target PPS: 2800.00
+Actual PPS: 3000.00
