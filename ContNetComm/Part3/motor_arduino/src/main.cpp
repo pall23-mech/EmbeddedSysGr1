@@ -13,11 +13,12 @@ Analog_out motorIN1(1);  // PWM pin D9 for motor control
 Encoder encoder(3, 4);   // Encoder pins D11, D12
 float kp = 0.01;
 float ti = 5;
+float MIN_PWM_THRESHOLD = 0.1;
 PI_controller controller(kp, ti);
 
 unsigned long lastPrintTime = 0;
 double actualSpeed = 0;
-double refSpeed = 0;
+double refSpeed = 1500; // Set initial target speed to 1500
 double pwmValue = 0;
 double controlSignal = 0;
 
@@ -30,10 +31,19 @@ void setup() {
     encoder.init();
     motorIN2.init();
     motorIN1.init(10);   // PWM frequency in ms
-    motorIN1.set(0);     // Set initial duty cycle to 0
-    motorIN2.set_lo();   // Ensure motor is off
+    motorIN1.set(0);     // Set initial duty cycle to 100
+    motorIN2.set_lo();   // Ensure motor is on
 
-    Serial.println("Motor control setup complete.");
+    // Set motor to initial speed
+    actualSpeed = abs(encoder.speed());
+    controlSignal = controller.update(refSpeed, actualSpeed);
+    controlSignal = constrain(controlSignal, 0.0, 1.0); // Constrain to PWM range
+    pwmValue = max(controlSignal, MIN_PWM_THRESHOLD);
+    motorIN1.set(pwmValue);
+
+
+    //Serial.println("AAAAAAAA");  //Motor initialized with speed 1500.");
+
 }
 
 void loop() {
@@ -60,20 +70,26 @@ void loop() {
             }
             if (msg[1] == 0x06) { // Command to set motor speed
                 uint16_t targetSpeed = (msg[4] << 8) | msg[5];
-                if (targetSpeed >= 0 && targetSpeed <= 255) { // Valid range check
+                
+                // Adjust the valid range check to accept higher speeds
+                if (targetSpeed >= 0 && targetSpeed <= 65535) { // Adjusted range check
                     refSpeed = targetSpeed;
-                    actualSpeed = abs(encoder.speed());
-                    controlSignal = controller.update(refSpeed, actualSpeed);
-                    controlSignal = constrain(controlSignal, 0.0, 1.0); // Constrain to PWM range
-                    pwmValue = controlSignal;
-                    motorIN1.set(pwmValue); // Update motor PWM based on control signal
 
                     // Acknowledge the command
-                    Serial.println("Motor speed command received and executed.");
+                    Serial.println("AAAAAAAA");
+                } else {
+                    Serial.println("ABCDEFGH");
                 }
             }
         }
     }
+    motorIN2.set_hi();
+    // Continuous control loop for updating motor speed
+    actualSpeed = abs(encoder.speed());
+    controlSignal = controller.update(refSpeed, actualSpeed);
+    controlSignal = constrain(controlSignal, 0.0, 1.0); // Constrain to PWM range
+    pwmValue = controlSignal;
+    motorIN1.set(pwmValue); // Continuously update motor PWM based on control signal
 
     // Periodically update encoder and control loop
     encoder.update();
