@@ -29,10 +29,10 @@ void loop() {
             if (msg[1] == 0x03) {    // Am I reading?
                 //Serial.write("ABCDEFGH");
                 if (msg[3] == 0) {   // Am I reading from the sensor?
-                    Serial.write("AAAAAAAA");
+                    //Serial.write("AAAAAAAA");
                     _delay_ms(100);
                     if (msg[5] == 1) { // RPi only asked for one value?
-                       // Serial.print("HGFEDCBA");
+                        //Serial.print("HGFEDCBA");
                         data = (uint16_t)(smoothedValue);
                         msg[4] = (uint8_t)(data >> 8);
                         msg[5] = (uint8_t)(data & 0x00FF);
