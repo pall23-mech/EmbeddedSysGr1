@@ -146,7 +146,7 @@ class Operational : public State
         }
     }
 
-    void on_command_stop() override
+    void on_command_stop() overrideds
     {
         Serial.println("OP:Stop command detected - Stopping");
         this->context_->transition_to(new Stopped);

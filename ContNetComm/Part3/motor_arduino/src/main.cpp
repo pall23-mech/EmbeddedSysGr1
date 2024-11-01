@@ -7,6 +7,51 @@
 #include "analog_out.h"
 #include "PI_controller.h"
 
+// Forward declaration of Context to allow State to reference it
+class Context;
+
+class State {
+protected:
+    Context *context_;
+
+public:
+    virtual ~State() {}
+    void set_context(Context *context) { this->context_ = context; }
+    virtual void on_do() = 0;
+    virtual void on_entry() = 0;
+    virtual void on_exit() = 0;
+    virtual void on_event1() = 0;
+    virtual void on_event2() = 0;
+};
+
+// Context class that manages state transitions
+class Context {
+private:
+    State *state_;
+
+public:
+    Context(State *state) : state_(nullptr) {
+        this->transition_to(state);
+    }
+
+    ~Context() { delete state_; }
+
+    void transition_to(State *state) {
+        if (this->state_ != nullptr) {
+            this->state_->on_exit();
+            delete this->state_;
+        }
+        this->state_ = state;
+        this->state_->set_context(this);
+        this->state_->on_entry();
+    }
+
+    void do_work() { this->state_->on_do(); }
+    void event1() { this->state_->on_event1(); }
+    void event2() { this->state_->on_event2(); }
+};
+
+// Timer and motor control variables
 Timer_msec timer;
 Digital_out motorIN2(0); // pin D8 for motor control
 Analog_out motorIN1(1);  // PWM pin D9 for motor control
@@ -15,97 +60,144 @@ float kp = 0.01;
 float ti = 5;
 float MIN_PWM_THRESHOLD = 0.1;
 PI_controller controller(kp, ti);
-
 unsigned long lastPrintTime = 0;
 double actualSpeed = 0;
-double refSpeed = 1500; // Set initial target speed to 1500
+double refSpeed = 0;
 double pwmValue = 0;
 double controlSignal = 0;
 
+// Define RunningState first
+class RunningState : public State {
+public:
+    void on_do() override {
+        Serial.println("Motor is running.");
+        actualSpeed = abs(encoder.speed());
+        controlSignal = controller.update(refSpeed, actualSpeed);
+        controlSignal = constrain(controlSignal, MIN_PWM_THRESHOLD, 1.0);
+        pwmValue = controlSignal;
+        motorIN1.set(pwmValue);
+    }
+
+    void on_entry() override {
+        Serial.println("Entering Running State.");
+        motorIN2.set_hi(); // Enable motor
+    }
+
+    void on_exit() override {
+        Serial.println("Exiting Running State.");
+        motorIN1.set(0); // Stop PWM output
+    }
+
+    void on_event1() override {}
+
+    void on_event2() override {
+        this->context_->transition_to(new StoppedState);
+    }
+};
+
+// Define StoppedState after RunningState
+class StoppedState : public State {
+public:
+    void on_do() override {
+        Serial.println("Motor is stopped.");
+    }
+
+    void on_entry() override {
+        Serial.println("Entering Stopped State.");
+        motorIN2.set_lo(); // Disable motor
+        motorIN1.set(0);   // Set PWM to 0
+    }
+
+    void on_exit() override {
+        Serial.println("Exiting Stopped State.");
+    }
+
+    void on_event1() override {
+        this->context_->transition_to(new RunningState);
+    }
+
+    void on_event2() override {}
+};
+
+// Define PreOperationalState
+class PreOperationalState : public State {
+public:
+    void on_do() override {
+        Serial.println("Motor is in pre-operational state.");
+    }
+
+    void on_entry() override {
+        Serial.println("Entering Pre-Operational State.");
+        motorIN1.set(0.2); // Example low PWM
+        motorIN2.set_hi();
+    }
+
+    void on_exit() override {
+        Serial.println("Exiting Pre-Operational State.");
+        motorIN1.set(0);
+    }
+
+    void on_event1() override {
+        this->context_->transition_to(new StoppedState);
+    }
+
+    void on_event2() override {
+        this->context_->transition_to(new RunningState);
+    }
+};
+
+Context *motorContext;
+
 void setup() {
-    // Initialize Serial and components
-    Serial.begin(115200, SERIAL_8N1);
-    timer.init(0.1); // Timer interval in ms
-    sei();           // Enable global interrupts
+    Serial.begin(115200);
+    motorContext = new Context(new StoppedState);
+    timer.init(0.1);  // Timer interval in ms
+    sei();            // Enable global interrupts
 
     encoder.init();
     motorIN2.init();
-    motorIN1.init(10);   // PWM frequency in ms
-    motorIN1.set(0);     // Set initial duty cycle to 100
-    motorIN2.set_lo();   // Ensure motor is on
-
-    // Set motor to initial speed
-    actualSpeed = abs(encoder.speed());
-    controlSignal = controller.update(refSpeed, actualSpeed);
-    controlSignal = constrain(controlSignal, 0.0, 1.0); // Constrain to PWM range
-    pwmValue = max(controlSignal, MIN_PWM_THRESHOLD);
-    motorIN1.set(pwmValue);
-
-
-    //Serial.println("AAAAAAAA");  //Motor initialized with speed 1500.");
-
+    motorIN1.init(10);  // PWM frequency in ms
+    motorIN1.set(0);    // Initialize PWM to 0
 }
 
 void loop() {
-    const size_t MSG_LEN = 8;
-    uint8_t msg[MSG_LEN];
+    uint8_t msg[8];
 
-    // Check for incoming messages only if there are enough bytes
-    if (Serial.available() >= MSG_LEN) {
-        Serial.readBytes(msg, MSG_LEN);
+    // Check for incoming messages to transition states
+    if (Serial.available() >= 8) {
+        Serial.readBytes(msg, 8);
 
-        // Check if this command is intended for motor control
-        if (msg[0] == 0x01) {
-            if (msg[1] == 0x03) { // Request to read motor speed
-                actualSpeed = abs(encoder.speed()); // Get motor speed
-                uint16_t speedData = (uint16_t)actualSpeed;
-                
-                // Prepare message response with motor speed
-                msg[4] = (uint8_t)(speedData >> 8);   // High byte
-                msg[5] = (uint8_t)(speedData & 0xFF); // Low byte
-                msg[6] = 0xFF; // Placeholder for CRC (if not used)
-                msg[7] = 0xFF; // Placeholder for CRC (if not used)
-                
-                Serial.write(msg, MSG_LEN); // Send motor speed back to RPi
-            }
-            if (msg[1] == 0x06) { // Command to set motor speed
-                uint16_t targetSpeed = (msg[4] << 8) | msg[5];
-                
-                // Adjust the valid range check to accept higher speeds
-                if (targetSpeed >= 0 && targetSpeed <= 65535) { // Adjusted range check
-                    refSpeed = targetSpeed;
-
-                    // Acknowledge the command
-                    Serial.println("AAAAAAAA");
-                } else {
-                    Serial.println("ABCDEFGH");
-                }
+        // Process command for specific states
+        if (msg[0] == 0x00 && msg[1] == 0x06) {
+            switch (msg[4]) {
+                case 0x01:
+                    motorContext->event1(); // Transition to operational (RUNNING)
+                    Serial.println("Set node operational: RUNNING");
+                    break;
+                case 0x02:
+                    motorContext->event2(); // Transition to stopped (STOPPED)
+                    Serial.println("Stop node: STOPPED");
+                    break;
+                case 0x80:
+                    motorContext->transition_to(new PreOperationalState);
+                    Serial.println("Set node pre-operational: PRE_OPERATIONAL");
+                    break;
+                case 0x81:
+                    motorContext->transition_to(new StoppedState);
+                    Serial.println("Reset node: STOPPED");
+                    break;
+                case 0x82:
+                    motorContext->transition_to(new StoppedState); // Reset communication
+                    refSpeed = 0;
+                    Serial.println("Reset communications: STOPPED and reset");
+                    break;
+                default:
+                    Serial.println("Unknown command");
+                    break;
             }
         }
     }
-    motorIN2.set_hi();
-    // Continuous control loop for updating motor speed
-    actualSpeed = abs(encoder.speed());
-    controlSignal = controller.update(refSpeed, actualSpeed);
-    controlSignal = constrain(controlSignal, 0.0, 1.0); // Constrain to PWM range
-    pwmValue = controlSignal;
-    motorIN1.set(pwmValue); // Continuously update motor PWM based on control signal
 
-    // Periodically update encoder and control loop
-    encoder.update();
-    _delay_ms(3);
-}
-
-// Interrupt Service Routine for Encoder Update
-ISR(INT0_vect) {
-    encoder.update();
-}
-
-// ISR for PWM control (if needed for precise timing)
-ISR(TIMER1_COMPA_vect) {
-    motorIN1.pin.set_hi();
-}
-
-ISR(TIMER1_COMPB_vect) {
-    motorIN1.pin.set_lo();
+    motorContext->do_work(); // Execute the current state's main action
+    delay(100); // Simulate some processing time
 }

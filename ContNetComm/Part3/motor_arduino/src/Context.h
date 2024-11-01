@@ -1,46 +1,27 @@
 #pragma once
-#include <State.h>
+#include "State.h"  // Include the full definition of State
 #include <Arduino.h>
 
-class State; // Forward declaration of State
-
-class Context
-{
-  /**
-   * @var State A reference to the current state of the Context.
-   */
-
+class Context {
 private:
-  State *state_;
+    State *state_;  // Pointer to the current state of the context
 
 public:
-  Context(State *state) : state_(nullptr)
-  {
-    this->transition_to(state);
-  };
+    Context(State *state = nullptr) : state_(nullptr) {
+        this->transition_to(state);
+    }
 
-  ~Context()
-  {
-    delete state_;
-  }
+    ~Context();
 
-  /**
-   * The Context allows changing the State object at runtime.
-   */
+    // Allow changing the State object at runtime
+    void transition_to(State *state);
 
-  void transition_to(State *state);
-
-  /**
-   * The Context delegates part of its behavior to the current State object.
-   */
-
-  void do_work();
-
-  void command_go();
-
-  void command_stop();
-
-  void timeout();
-
-  void on_operational();
+    // Delegate behavior to the current State object
+    void do_work();
+    void command_go();
+    void command_stop();
+    void timeout();
+    void on_operational();
 };
+
+#endif // CONTEXT_H
