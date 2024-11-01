@@ -29,7 +29,7 @@ uint16_t ModRTU_CRC(uint8_t buf[], int len)
 
 void setup()
 {
-  Serial.begin(9600); // opens serial port, sets data rate to 9600 bps (115200 does not work for Margrét, the output is strange then)
+  Serial.begin(115200); // opens serial port, sets data rate to 9600 bps (115200 does not work for Margrét, the output is strange then)
   // can put serial.println for commands available here...
   context = new Context(new InitializationState()); // Start in Initialization state
   pinMode(LED_BUILTIN, OUTPUT); // Set LED pin as output
