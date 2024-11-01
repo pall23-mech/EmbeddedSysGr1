@@ -58,18 +58,22 @@ int main(){
                 }
                 if (msg[1] == 0x06){    //am I writing?
                     uint16_t reg = (msg[2]<<8|msg[3]);
-                    if (reg == 0x00){   //am I writing on the motor?
-                        uint16_t ref = (msg[4]<<8|msg[5]);
-                        if(ref>=0 && ref<=255){          // is it in range?
-                            stateVars.ref = ref;
-                            uint16_t myCRC = ModRTU_CRC(msg, 6);
-                            uint8_t myCRC1 = (uint8_t)(myCRC >> 8);
-                            uint8_t myCRC2 = (uint8_t)(myCRC & 0x00FF);
-                            if (msg[6] == myCRC1 && msg[7] == myCRC2){
-                                Serial.write(msg,8);        //success, sending the message back to the rpi 
-                            }
-                        } 
-                    } else if (reg == 0x01) { // Viljum breyta um states
+if (reg == 0x00) {   // Writing to the motor
+    uint16_t ref = (msg[4] << 8 | msg[5]);
+    if (ref >= 0 && ref <= 255) { // is it in range?
+        stateVars.ref = ref;
+        
+        // Disable CRC check for debugging
+        // uint16_t myCRC = ModRTU_CRC(msg, 6);
+        // uint8_t myCRC1 = (uint8_t)(myCRC >> 8);
+        // uint8_t myCRC2 = (uint8_t)(myCRC & 0x00FF);
+        // if (msg[6] == myCRC1 && msg[7] == myCRC2) {
+
+        Serial.write(msg, 8); // Success, sending the message back to the RPi
+        // }
+    }
+}
+ else if (reg == 0x01) { // Viljum breyta um states
                         uint16_t ref = (msg[4]<<8|msg[5]);
                         if(((ref == 0x01) || (ref == 0x02) || (ref == 0x80) || (ref == 0x81)) || ref == 0x82){          // is it in range?
                             if (ref == 0x01) {  // 01
