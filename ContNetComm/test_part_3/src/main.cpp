@@ -57,22 +57,22 @@ void loop()
     Serial.readBytes(msg, MSG_LEN);
 
     // Print out message bytes for debugging
-    Serial.print("Received bytes: ");
+    //Serial.print("Received bytes: ");
     for (int i = 0; i < MSG_LEN; i++) {
         Serial.print(msg[i], HEX);
-        Serial.print(" ");
+       // Serial.print(" ");
     }
-    Serial.println();
+    //Serial.println();
 
     // Verify the command is intended for this node (chech node ID in msg[0])
     if(msg[0] == 0x01){   // checking if this command is for this arduino?
       uint16_t reg = (msg[2] << 8) | msg[3];  // Extract register
       uint16_t ref = (msg[4] << 8) | msg[5];  // Extract reference value
 
-      Serial.print("Reg: ");
-      Serial.println(reg, HEX);
-      Serial.print("Ref: ");
-      Serial.println(ref, HEX);
+      //Serial.print("Reg: ");
+      //Serial.println(reg, HEX);
+      //Serial.print("Ref: ");
+      //Serial.println(ref, HEX);
 
       // Handle CANopen state control commands for this Arduino
       if (reg == 0x01) {  // State control command
@@ -109,7 +109,7 @@ void loop()
       if (msg[6] == myCRC1 && msg[7] == myCRC2) {
         Serial.write(msg, MSG_LEN);  // Echo back to confirm reception
       } else {
-        Serial.println("CRC mismatch");
+        //Serial.println("CRC mismatch");
       }
     }
   }

@@ -39,9 +39,6 @@ int main(int argc, char *argv[]) {
     // --- Send the first message (1 6 1 1) ---
     make_msg(atoi(argv[1]), atoi(argv[2]), atoi(argv[3]), atoi(argv[4]), msg);
 
-    // Flush the UART buffer before sending
-    tcflush(file, TCIOFLUSH);
-
     if ((count = write(file, msg, MSG_LEN)) < 0) {
         perror("Failed to write to the output\n");
         return -1;
@@ -56,7 +53,7 @@ int main(int argc, char *argv[]) {
     usleep(1000000); // Wait for 1 second for a response
 
     // --- Read the response to the first message ---
-    unsigned char receive[8];  // Buffer for exact expected response size
+    unsigned char receive[8];
     if ((count = read(file, (void*)receive, 8)) < 0) {
         perror("Failed to read from the input\n");
         return -1;
@@ -73,21 +70,21 @@ int main(int argc, char *argv[]) {
 
         // Check if the response starts with the expected device ID and function code
         if (receive[0] == 0x02 && receive[1] == 0x03) {  
-            sens_val = (receive[4] << 8) | receive[5];  // High byte in receive[4], low byte in receive[5]
-            rpm = sens_val * 120 / 1023;  // Calculate RPM from sensor value
+            sens_val = (receive[4] << 8) | receive[5];
+            rpm = sens_val * 120 / 1023;
             printf("Calculated RPM from first response: %d\n", rpm);
         } else {
             printf("Unexpected device ID or function code in response\n");
         }
     }
 
+    // Flush UART buffer to clear any residual data
+    tcflush(file, TCIFLUSH);
+
     usleep(2000000); // Wait for 2 seconds before sending the second message
 
     // --- Send the second message (2 3 0 1) ---
-    make_msg(2, 3, 0, 1, msg); // Creating message with ID=2, func=3, reg=0, data=1
-
-    // Flush the UART buffer before sending
-    tcflush(file, TCIOFLUSH);
+    make_msg(2, 3, 0, 1, msg);
 
     if ((count = write(file, msg, MSG_LEN)) < 0) {
         perror("Failed to write the second message\n");
@@ -117,7 +114,7 @@ int main(int argc, char *argv[]) {
         }
         printf("\n");
 
-        // Check if response ID is 0x02 and function code is 0x03 (Modbus Read Holding Registers)
+        // Check if response ID is 0x02 and function code is 0x03
         if (receive[0] == 0x02 && receive[1] == 0x03) {
             sens_val = (receive[4] << 8) | receive[5];
             rpm = sens_val * 120 / 1023;
@@ -125,7 +122,7 @@ int main(int argc, char *argv[]) {
         } else {
             printf("Unexpected device ID or function code in second response\n");
 
-            // Print ASCII interpretation to help troubleshoot unexpected data
+            // ASCII interpretation of unexpected data
             printf("ASCII interpretation of unexpected data: ");
             for (int i = 0; i < 8; i++) {
                 printf("%c", receive[i] >= 32 && receive[i] <= 126 ? receive[i] : '.');
