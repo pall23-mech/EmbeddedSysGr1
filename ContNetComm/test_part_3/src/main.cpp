@@ -39,7 +39,10 @@ void setup()
 void loop()
 {
   // The main code:
+        //  uint8_t msg[8] = {0x02, 0x03, 0x00, 0x00, 0x00, 0x01, 0x39, 0x84};
 
+        // Send the message through UART each control loop iteration
+        //Serial.write(msg, sizeof(msg));
   context->do_work(); // Execute current state's behavior
 
   if (digitalRead(FLT_PIN) == HIGH) {

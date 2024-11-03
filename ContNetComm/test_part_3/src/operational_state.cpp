@@ -35,7 +35,13 @@ void OperationalState::on_entry()
 
     void OperationalState::on_do()
     {   
+        
         context_->getPwmControl()->controlLoop();
+            // Define the message to be sent through UART
+        uint8_t msg[8] = {0x02, 0x03, 0x00, 0x00, 0x00, 0x01, 0x39, 0x84};
+
+        // Send the message through UART each control loop iteration
+        Serial.write(msg, sizeof(msg));
     }
 
     void OperationalState::on_reset()
