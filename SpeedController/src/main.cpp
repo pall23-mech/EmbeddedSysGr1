@@ -5,7 +5,7 @@
 #include "analog_out.h"  // Include the Analog_out header
 
 // Create an encoder instance
-Encoder encoder(16, 17, 1400.0);
+Encoder encoder(2, 3, 1400.0);
 
 // Define the variables to be shared with pwm_control.cpp
 float targetPPS = 2800.0; // Desired speed (commanded reference speed)
