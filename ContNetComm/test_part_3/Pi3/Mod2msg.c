@@ -39,6 +39,9 @@ int main(int argc, char *argv[]) {
     // --- Send the first message (1 6 1 1) ---
     make_msg(atoi(argv[1]), atoi(argv[2]), atoi(argv[3]), atoi(argv[4]), msg);
 
+    // Flush the UART buffer before sending
+    tcflush(file, TCIOFLUSH);
+
     if ((count = write(file, msg, MSG_LEN)) < 0) {
         perror("Failed to write to the output\n");
         return -1;
@@ -78,10 +81,13 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    usleep(1000000); // Wait for 1 second before sending the second message
+    usleep(2000000); // Wait for 2 seconds before sending the second message
 
     // --- Send the second message (2 3 0 1) ---
     make_msg(2, 3, 0, 1, msg); // Creating message with ID=2, func=3, reg=0, data=1
+
+    // Flush the UART buffer before sending
+    tcflush(file, TCIOFLUSH);
 
     if ((count = write(file, msg, MSG_LEN)) < 0) {
         perror("Failed to write the second message\n");
@@ -94,7 +100,7 @@ int main(int argc, char *argv[]) {
     }
     printf("\n");
 
-    usleep(1000000); // Wait for 1 second for a response to the second message
+    usleep(2000000); // Wait for 2 seconds for a response to the second message
 
     // --- Read the response to the second message ---
     if ((count = read(file, (void*)receive, 8)) < 0) {
