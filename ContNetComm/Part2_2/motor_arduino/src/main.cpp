@@ -22,6 +22,22 @@ double refSpeed = 0; // Set initial target speed to 0 to keep motor off initiall
 double pwmValue = 0;
 double controlSignal = 0;
 
+uint16_t ModRTU_CRC(uint8_t buf[], int len) {
+    uint16_t crc = 0xFFFF;
+    for (int pos = 0; pos < len; pos++) {
+        crc ^= (uint16_t)buf[pos]; // XOR byte into least sig. byte of crc
+        for (int i = 8; i != 0; i--) { // Loop over each bit
+            if ((crc & 0x0001) != 0) { // If the LSB is set
+                crc >>= 1; // Shift right and XOR 0xA001
+                crc ^= 0xA001;
+            } else {
+                crc >>= 1; // Just shift right
+            }
+        }
+    }
+    return crc;
+}
+
 void setup() {
     // Initialize Serial and components
     Serial.begin(115200, SERIAL_8N1);
@@ -43,34 +59,49 @@ void loop() {
     if (Serial.available() >= MSG_LEN) {
         Serial.readBytes(msg, MSG_LEN);
 
-        // Check if this command is intended for motor control
-        if (msg[0] == 0x01) {
-            if (msg[1] == 0x03) { // Request to read motor speed
-                actualSpeed = abs(encoder.speed()); // Get motor speed
-                uint16_t speedData = (uint16_t)actualSpeed;
-                
-                // Prepare message response with motor speed
-                msg[4] = (uint8_t)(speedData >> 8);   // High byte
-                msg[5] = (uint8_t)(speedData & 0xFF); // Low byte
-                msg[6] = 0xFF; // Placeholder for CRC (if not used)
-                msg[7] = 0xFF; // Placeholder for CRC (if not used)
-                
-                Serial.write(msg, MSG_LEN); // Send motor speed back to RPi
-            }
-            if (msg[1] == 0x06) { // Command to set motor speed
-                uint16_t targetSpeed = (msg[4] << 8) | msg[5];
-                
-                // Adjust the valid range check to accept higher speeds
-                if (targetSpeed >= 0 && targetSpeed <= 65535) { // Adjusted range check
-                    refSpeed = targetSpeed;
-                    motorIN2.set_hi(); // Turn on motor only when a speed command is received
+        // Compute CRC for verification
+        uint16_t receivedCRC = (msg[6] << 8) | msg[7]; // CRC from the message
+        uint16_t calculatedCRC = ModRTU_CRC(msg, 6);    // CRC calculated from the first 6 bytes
 
-                    // Acknowledge the command
-                   // Serial.println("AAAAAAAA");
-                } else {
-                    Serial.println("ABCDEFGH");
+        // Verify CRC before processing the command
+        if (receivedCRC == calculatedCRC) {
+            // Check if this command is intended for motor control
+            if (msg[0] == 0x01) {
+                if (msg[1] == 0x03) { // Request to read motor speed
+                    actualSpeed = abs(encoder.speed()); // Get motor speed
+                    uint16_t speedData = (uint16_t)actualSpeed;
+                    
+                    // Prepare message response with motor speed
+                    msg[4] = (uint8_t)(speedData >> 8);   // High byte
+                    msg[5] = (uint8_t)(speedData & 0xFF); // Low byte
+                    
+                    // Compute and attach CRC to response
+                    uint16_t responseCRC = ModRTU_CRC(msg, 6);
+                    msg[6] = (uint8_t)(responseCRC >> 8);
+                    msg[7] = (uint8_t)(responseCRC & 0xFF);
+                    
+                    Serial.write(msg, MSG_LEN); // Send motor speed back to RPi
+                }
+                if (msg[1] == 0x06) { // Command to set motor speed
+                    uint16_t targetSpeed = (msg[4] << 8) | msg[5];
+                    
+                    // Adjust the valid range check to accept higher speeds
+                    if (targetSpeed >= 0 && targetSpeed <= 65535) { // Adjusted range check
+                        refSpeed = targetSpeed;
+                        motorIN2.set_hi(); // Turn on motor only when a speed command is received
+
+                        // Acknowledge the command with CRC
+                        uint16_t responseCRC = ModRTU_CRC(msg, 6);
+                        msg[6] = (uint8_t)(responseCRC >> 8);
+                        msg[7] = (uint8_t)(responseCRC & 0xFF);
+                        Serial.write(msg, MSG_LEN); // Send acknowledgment back to RPi
+                    } else {
+                        Serial.println("Invalid speed range"); // For debugging
+                    }
                 }
             }
+        } else {
+            Serial.println("CRC check failed"); // Indicate CRC failure for debugging
         }
     }
 

@@ -5,6 +5,7 @@ int analogPin = A3; // Sensor input pin
 float smoothedValue = 0.0;
 float alpha = 0.1;  // Adjust smoothing sensitivity
 char buffer[100];   // Increased buffer size for response formatting
+const int LED_PIN = LED_BUILTIN; // LED pin for blinking
 
 // Function to calculate Modbus RTU CRC
 uint16_t ModRTU_CRC(uint8_t buf[], int len) {
@@ -26,6 +27,7 @@ uint16_t ModRTU_CRC(uint8_t buf[], int len) {
 void setup() {
     Serial.begin(115200, SERIAL_8N1); // Initialize UART for communication
     pinMode(analogPin, INPUT);
+    pinMode(LED_PIN, OUTPUT); // Set up LED pin as output
     Serial.println("Arduino Modbus Interface with CRC"); // Debug message
 }
 
@@ -57,11 +59,18 @@ void loop() {
                     msg[6] = (uint8_t)(calculatedCRC >> 8);
                     msg[7] = (uint8_t)(calculatedCRC & 0xFF);
 
-                    // Send the response with data and CRC
-                    Serial.write(msg, MSG_LEN);
+                    // Blink LED before sending the response
+                    digitalWrite(LED_PIN, HIGH);  // Turn LED on
+                    Serial.write(msg, MSG_LEN);   // Send the response with data and CRC
+                    delay(300);                   // Wait for 0.3 seconds
+                    digitalWrite(LED_PIN, LOW);   // Turn LED off
                 }
                 if (msg[1] == 0x06) { // Write command
-                    Serial.write("Helloshe"); // Example response for a write request
+                    // Blink LED before sending the response
+                    digitalWrite(LED_PIN, HIGH);  // Turn LED on
+                    Serial.write("Helloshe");      // Example response for a write request
+                    delay(300);                   // Wait for 0.3 seconds
+                    digitalWrite(LED_PIN, LOW);   // Turn LED off
                 }
             } else {
                 Serial.println("CRC mismatch detected"); // Debug message for CRC failure
